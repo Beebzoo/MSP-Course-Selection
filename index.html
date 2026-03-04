@@ -204,6 +204,9 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   #sumcard{box-shadow:none!important;border:1px solid #ddd!important;margin:0!important}
   .actbar{display:none!important}
   .printonly{display:block!important}
+  .sum-status-alert{display:none!important}
+  .card-h .spill{display:none!important}
+  .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 
 @media(max-width:900px){
@@ -698,14 +701,74 @@ function sum(){
   if(lab&&lab.Corequisite&&lab.CorequisiteOf&&!sel.some(c=>c.Code===lab.CorequisiteOf))iss.push(`Missing co-req: ${lab.Code}`);
   for(const it of [...sel,lab].filter(Boolean))if(it.Prerequisite&&it.PrerequisiteCodes&&!p.ack[it.Code])iss.push(`Unconfirmed prereq: ${it.Code}`);
   const done=sel.length===2&&lab&&!iss.length;
+
+  // Course detail rows with prerequisites
   let rows='';
-  sel.forEach(c=>{const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');rows+=`<tr><td><span class="tchip">Course</span></td><td><div class="scode">${c.Code}</div><div class="sname">${c.Title}</div></td><td><span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></td><td><div class="days">${chips}</div></td><td class="scoord">${c.Coordinator}</td></tr>`;});
-  if(lab){const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');rows+=`<tr><td><span class="tchip">Practical</span></td><td><div class="scode">${lab.Code}</div><div class="sname">${lab.Title}</div></td><td>\u2014</td><td><div class="days">${chips}</div></td><td class="scoord">${lab.Coordinator}</td></tr>`;}
+  sel.forEach(c=>{
+    const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    let prereqInfo='';
+    if(c.Prerequisite&&c.PrerequisiteCodes){
+      const met=transcript?checkPrereqMet(c.PrerequisiteCodes):p.ack[c.Code];
+      prereqInfo=`<div style="font-size:10.5px;margin-top:3px;color:${met?'var(--ok)':'var(--warn)'}">Prereq: ${c.PrerequisiteCodes} ${met?'\u2713':'\u26a0'}</div>`;
+    }
+    let coreqInfo='';
+    if(c.Corequisite&&c.CorequisiteOf){
+      const ok=lab&&lab.Code===c.CorequisiteOf;
+      coreqInfo=`<div style="font-size:10.5px;margin-top:2px;color:${ok?'var(--ok)':'var(--err)'}">Co-req: ${c.CorequisiteOf} ${ok?'\u2713':'\u2717'}</div>`;
+    }
+    rows+=`<tr><td><span class="tchip">Course</span></td><td><div class="scode">${c.Code}</div><div class="sname">${c.Title}</div>${prereqInfo}${coreqInfo}</td><td><span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></td><td><div class="days">${chips}</div></td><td class="scoord">${c.Coordinator}</td></tr>`;
+  });
+  if(lab){
+    const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    let prereqInfo='';
+    if(lab.Prerequisite&&lab.PrerequisiteCodes){
+      const met=transcript?checkPrereqMet(lab.PrerequisiteCodes):p.ack[lab.Code];
+      prereqInfo=`<div style="font-size:10.5px;margin-top:3px;color:${met?'var(--ok)':'var(--warn)'}">Prereq: ${lab.PrerequisiteCodes} ${met?'\u2713':'\u26a0'}</div>`;
+    }
+    let coreqInfo='';
+    if(lab.Corequisite&&lab.CorequisiteOf){
+      const ok=sel.some(c=>c.Code===lab.CorequisiteOf);
+      coreqInfo=`<div style="font-size:10.5px;margin-top:2px;color:${ok?'var(--ok)':'var(--err)'}">Co-req: ${lab.CorequisiteOf} ${ok?'\u2713':'\u2717'}</div>`;
+    }
+    rows+=`<tr><td><span class="tchip">Practical</span></td><td><div class="scode">${lab.Code}</div><div class="sname">${lab.Title}</div>${prereqInfo}${coreqInfo}</td><td>\u2014</td><td><div class="days">${chips}</div></td><td class="scoord">${lab.Coordinator}</td></tr>`;
+  }
   else rows+='<tr><td><span class="tchip">Practical</span></td><td colspan="4" style="color:var(--g4);font-style:italic;font-size:12px">No practical selected yet</td></tr>';
+
+  // Status banner (hidden in print)
   let sb='';
-  if(done)sb='<div class="alrt a-ok" style="margin-top:16px"><span class="aico">\u2713</span><div class="abdy"><strong>Plan complete \u2014 ready to print</strong><p>All checks passed. Save as PDF to bring to your advising session.</p></div></div>';
-  else if(iss.length)sb=`<div class="alrt a-warn" style="margin-top:16px"><span class="aico">\u26a0</span><div class="abdy"><strong>Outstanding issues</strong><p>${iss.join(' \u00b7 ')}</p></div></div>`;
-  bEl.innerHTML=`<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div>${sb}`;
+  if(done)sb='<div class="alrt a-ok sum-status-alert" style="margin-top:16px"><span class="aico">\u2713</span><div class="abdy"><strong>Plan complete \u2014 ready to print</strong><p>All checks passed. Save as PDF to bring to your advising session.</p></div></div>';
+  else if(iss.length)sb=`<div class="alrt a-warn sum-status-alert" style="margin-top:16px"><span class="aico">\u26a0</span><div class="abdy"><strong>Outstanding issues</strong><p>${iss.join(' \u00b7 ')}</p></div></div>`;
+
+  // Weekly timetable for print
+  const ttHtml=buildTTHTML(c1,c2,lab,false);
+
+  // Checks summary for print
+  let checksHtml='';
+  const allItems=[...sel,lab].filter(Boolean);
+  const preItems=allItems.filter(it=>it.Prerequisite&&it.PrerequisiteCodes);
+  const coItems=[];
+  for(const c of sel){if(c.Corequisite&&c.CorequisiteOf)coItems.push({from:c.Code,req:c.CorequisiteOf,ok:lab&&lab.Code===c.CorequisiteOf});}
+  if(lab&&lab.Corequisite&&lab.CorequisiteOf)coItems.push({from:lab.Code,req:lab.CorequisiteOf,ok:sel.some(c=>c.Code===lab.CorequisiteOf)});
+
+  if(preItems.length||coItems.length){
+    checksHtml='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--g2)"><p class="seclbl" style="margin-bottom:8px">Prerequisite &amp; Co-requisite Summary</p>';
+    preItems.forEach(it=>{
+      const met=transcript?checkPrereqMet(it.PrerequisiteCodes):p.ack[it.Code];
+      checksHtml+=`<div style="font-size:12px;padding:4px 0;color:${met?'var(--ok)':'var(--warn)'}"><strong>${it.Code}</strong> requires ${it.PrerequisiteCodes} \u2014 ${met?'Confirmed \u2713':'Unconfirmed \u26a0'}</div>`;
+    });
+    coItems.forEach(ci=>{
+      checksHtml+=`<div style="font-size:12px;padding:4px 0;color:${ci.ok?'var(--ok)':'var(--err)'}"><strong>${ci.from}</strong> co-requisite ${ci.req} \u2014 ${ci.ok?'Satisfied \u2713':'Missing \u2717'}</div>`;
+    });
+    checksHtml+='</div>';
+  }
+
+  // Student info for print
+  let stuHtml='';
+  if(transcript&&(transcript.name||transcript.pnumber)){
+    stuHtml=`<div style="margin-top:14px;padding:10px 14px;background:var(--g0);border-radius:var(--rs);border:1px solid var(--g2);font-size:12px"><strong style="color:var(--navy)">Student:</strong> ${transcript.name||''}${transcript.pnumber?' \u00b7 '+transcript.pnumber:''}</div>`;
+  }
+
+  bEl.innerHTML=`${stuHtml}<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${sb}`;
   if(done){sEl.className='spill sp-ok';sEl.textContent='\u2713 Ready to print';btn.disabled=false;}
   else if(iss.length){sEl.className='spill sp-warn';sEl.textContent='\u26a0 Issues to resolve';btn.disabled=true;}
   else{sEl.className='spill sp-pend';sEl.textContent='Incomplete';btn.disabled=true;}
