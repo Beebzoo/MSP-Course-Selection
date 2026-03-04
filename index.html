@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MSP Course Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #011B3C;
+  --sky: #6ED2EC;
+  --sky-light: #EAF8FD;
+  --orange: #F39237;
+  --orange-light: #FEF3E8;
+  --success: #166534;
+  --success-bg: #DCFCE7;
+  --success-border: #86EFAC;
+  --warn: #92400E;
+  --warn-bg: #FEF3C7;
+  --warn-border: #FCD34D;
+  --error: #991B1B;
+  --error-bg: #FEE2E2;
+  --error-border: #FCA5A5;
+  --info: #0C4A6E;
+  --info-bg: #E0F2FE;
+  --info-border: #7DD3FC;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-700: #334155;
+  --gray-900: #0F172A;
+  --slot-a-bg: #DBEAFE; --slot-a-text: #1D4ED8;
+  --slot-b-bg: #D1FAE5; --slot-b-text: #065F46;
+  --slot-c-bg: #FEF9C3; --slot-c-text: #854D0E;
+  --slot-d-bg: #EDE9FE; --slot-d-text: #5B21B6;
+  --slot-e-bg: #FFE4E6; --slot-e-text: #9F1239;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}
+
+body {
+  font-family: 'Source Sans 3', 'Source Sans Pro', -apple-system, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--navy);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 36px;
+  gap: 16px;
+}
+
+.header-logo {
+  height: 48px;
+  width: 130px;
+  object-fit: contain;
+  object-position: left center;
+}
+.header-logo-right { object-position: right center; }
+
+.header-center { text-align: center; flex: 1; }
+
+.header-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.header-sub {
+  font-size: 12.5px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.65);
+  margin-top: 2px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.header-meta {
+  background: rgba(255,255,255,0.07);
+  border-top: 1px solid rgba(255,255,255,0.09);
+  padding: 8px 36px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.7);
+  flex-wrap: wrap;
+}
+
+.meta-sep { color: rgba(255,255,255,0.25); margin: 0 4px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.badge-sky { background: rgba(110,210,236,0.18); color: var(--sky); border: 1px solid rgba(110,210,236,0.3); }
+.badge-orange { background: rgba(243,146,55,0.18); color: var(--orange); border: 1px solid rgba(243,146,55,0.3); }
+.badge-green { background: rgba(134,239,172,0.2); color: #4ADE80; border: 1px solid rgba(134,239,172,0.3); }
+
+/* ===== LAYOUT ===== */
+.main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 20px 72px;
+}
+
+/* ===== UPLOAD SCREEN ===== */
+#upload-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0 32px;
+  gap: 28px;
+}
+
+.upload-card {
+  width: 100%;
+  max-width: 540px;
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+
+.upload-hero {
+  background: var(--navy);
+  padding: 36px;
+  text-align: center;
+  color: white;
+}
+
+.upload-icon { font-size: 44px; display: block; margin-bottom: 14px; }
+
+.upload-hero h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.upload-hero p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
+
+.drop-zone {
+  padding: 28px 36px;
+  text-align: center;
+  border-top: 1px solid var(--gray-100);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+  background: var(--sky-light);
+}
+
+.drop-zone p {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 16px;
+}
+
+.btn-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 11px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-upload:hover { opacity: 0.88; }
+
+.upload-note {
+  max-width: 540px;
+  font-size: 13px;
+  color: var(--gray-500);
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 12px;
+}
+
+.legend-box {
+  max-width: 540px;
+  width: 100%;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-size: 13px;
+}
+
+.legend-box h3 {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  color: var(--gray-700);
+}
+.legend-item:last-child { margin-bottom: 0; }
+
+input[type=file] { display: none; }
+
+/* ===== PLANNER SCREEN ===== */
+#planner-screen { display: none; }
+
+/* ===== CARDS ===== */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-num {
+  width: 26px;
+  height: 26px;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.step-num.done { background: var(--orange); }
+
+.card-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.card-hint {
+  font-size: 12.5px;
+  color: var(--gray-400);
+  font-weight: 400;
+  margin-left: auto;
+}
+
+.card-body { padding: 22px; }
+
+/* ===== FORM FIELDS ===== */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+
+.field-label {
+  display: block;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.select-wrap { position: relative; }
+
+.select-wrap select {
+  width: 100%;
+  padding: 10px 34px 10px 12px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 14.5px;
+  font-family: inherit;
+  color: var(--gray-900);
+  background: white;
+  appearance: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.select-wrap select:hover { border-color: var(--gray-300); }
+
+.select-wrap select:focus {
+  outline: none;
+  border-color: var(--sky);
+  box-shadow: 0 0 0 3px rgba(110,210,236,0.2);
+}
+
+.select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  pointer-events: none;
+  font-size: 13px;
+}
+
+/* ===== COURSE INFO PILL ===== */
+.course-info {
+  display: none;
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+.course-info.show { display: block; }
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.info-row:last-child { margin-bottom: 0; }
+
+.slot-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.slot-A { background: var(--slot-a-bg); color: var(--slot-a-text); }
+.slot-B { background: var(--slot-b-bg); color: var(--slot-b-text); }
+.slot-C { background: var(--slot-c-bg); color: var(--slot-c-text); }
+.slot-D { background: var(--slot-d-bg); color: var(--slot-d-text); }
+.slot-E { background: var(--slot-e-bg); color: var(--slot-e-text); }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag-coreq { background: var(--info-bg); color: var(--info); }
+.tag-prereq { background: var(--warn-bg); color: var(--warn); }
+
+.day-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.day-chip {
+  background: var(--navy);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.info-coordinator { color: var(--gray-500); font-size: 12.5px; }
+
+/* ===== DIVIDER ===== */
+.divider { border: none; border-top: 1px solid var(--gray-100); margin: 18px 0; }
+
+/* ===== LAB COUNT ===== */
+.lab-count {
+  font-size: 12.5px;
+  color: var(--gray-400);
+  margin-top: 6px;
+}
+
+/* ===== STATUS PILL ===== */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+.status-pending { background: var(--gray-100); color: var(--gray-500); }
+.status-ok { background: var(--success-bg); color: var(--success); }
+.status-warn { background: var(--warn-bg); color: var(--warn); }
+.status-error { background: var(--error-bg); color: var(--error); }
+
+/* ===== ALERTS ===== */
+.alert {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 13px 15px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.alert:last-child { margin-bottom: 0; }
+
+.alert-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.alert-body { flex: 1; }
+.alert-body strong { display: block; font-weight: 600; margin-bottom: 1px; font-size: 13.5px; }
+.alert-body p { color: var(--gray-700); font-size: 13.5px; }
+
+.alert-ok { background: var(--success-bg); border: 1px solid var(--success-border); }
+.alert-ok .alert-icon, .alert-ok strong { color: var(--success); }
+
+.alert-warn { background: var(--warn-bg); border: 1px solid var(--warn-border); }
+.alert-warn .alert-icon, .alert-warn strong { color: var(--warn); }
+
+.alert-error { background: var(--error-bg); border: 1px solid var(--error-border); }
+.alert-error .alert-icon, .alert-error strong { color: var(--error); }
+
+.alert-info { background: var(--info-bg); border: 1px solid var(--info-border); }
+.alert-info .alert-icon, .alert-info strong { color: var(--info); }
+
+/* ===== PREREQUISITE CHECKBOXES ===== */
+.prereq-block {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 13px 15px;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  transition: background 0.15s, border-color 0.15s;
+}
+.prereq-block:last-child { margin-bottom: 0; }
+.prereq-block.confirmed {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.prereq-block input[type=checkbox] {
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--navy);
+}
+
+.prereq-block label { cursor: pointer; color: var(--gray-700); }
+.prereq-block label .pcode { font-weight: 600; color: var(--warn); }
+.prereq-block.confirmed label .pcode { color: var(--success); }
+.prereq-hint { font-size: 12px; color: var(--warn); margin-top: 3px; display: block; }
+.prereq-block.confirmed .prereq-hint { display: none; }
+
+/* ===== SECTION LABEL ===== */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-400);
+  margin-bottom: 12px;
+  margin-top: 4px;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 28px 20px;
+  color: var(--gray-400);
+}
+.empty-state .ei { font-size: 30px; display: block; margin-bottom: 8px; }
+.empty-state p { font-size: 13.5px; }
+
+/* ===== SUMMARY TABLE ===== */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.summary-table th {
+  background: var(--gray-50);
+  padding: 9px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.summary-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: middle;
+}
+
+.summary-table tr:last-child td { border-bottom: none; }
+
+.type-chip {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--gray-400);
+  background: var(--gray-100);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.summary-code { color: var(--gray-500); font-size: 12.5px; margin-bottom: 1px; }
+.summary-name { font-weight: 600; color: var(--gray-900); line-height: 1.3; }
+.summary-coord { font-size: 12px; color: var(--gray-400); }
+
+/* ===== ACTIONS BAR ===== */
+.actions-bar {
+  padding: 16px 22px;
+  background: var(--gray-50);
+  border-top: 1px solid var(--gray-100);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-orange { background: var(--orange); color: white; }
+.btn-orange:hover { opacity: 0.88; }
+.btn-orange:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-ghost {
+  background: white;
+  color: var(--gray-700);
+  border: 1.5px solid var(--gray-200);
+}
+.btn-ghost:hover { border-color: var(--gray-400); }
+
+.action-note {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--gray-400);
+  line-height: 1.4;
+  text-align: right;
+  max-width: 280px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 16px 20px;
+  font-size: 12px;
+  color: var(--gray-400);
+  border-top: 1px solid var(--gray-100);
+  background: white;
+}
+
+/* ===== PRINT HEADER (hidden on screen) ===== */
+.print-only { display: none; }
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  body { background: white !important; }
+
+  .header { position: static !important; box-shadow: none !important; }
+  .header-meta { display: none !important; }
+
+  footer { display: none !important; }
+
+  .main { padding: 16px !important; max-width: 100% !important; }
+
+  /* Hide everything except the summary card */
+  #upload-screen { display: none !important; }
+  #planner-screen > .card:not(#summary-card) { display: none !important; }
+
+  /* Summary card print styles */
+  #summary-card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    margin: 0 !important;
+  }
+
+  .actions-bar { display: none !important; }
+  .print-only { display: block !important; }
+
+  /* Make the header compact */
+  .header-top { padding: 12px 24px !important; }
+  .header-title { font-size: 20px !important; }
+  .header-sub { font-size: 11px !important; }
+  .header-logo { height: 40px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-top">
+    <img src="UMlogo.jpg" alt="Maastricht University" class="header-logo">
+    <div class="header-center">
+      <div class="header-title">MSP Course Planner</div>
+      <div class="header-sub">Maastricht Science Programme &nbsp;·&nbsp; Faculty of Science and Engineering</div>
+    </div>
+    <img src="MSPlogo.jpg" alt="MSP" class="header-logo header-logo-right">
+  </div>
+  <div class="header-meta">
+    <span id="meta-period">📅 Load a config file to begin</span>
+    <span class="meta-sep" id="meta-sep1" style="display:none">|</span>
+    <span id="meta-version" style="display:none"></span>
+    <span class="meta-sep" id="meta-sep2" style="display:none">|</span>
+    <span id="meta-counts" style="display:none"></span>
+  </div>
+</header>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- ── UPLOAD SCREEN ── -->
+  <div id="upload-screen">
+
+    <div class="upload-card">
+      <div class="upload-hero">
+        <span class="upload-icon">📋</span>
+        <h2>Plan your courses for next period</h2>
+        <p>Upload the MSP config file to check frame schedule conflicts, co-requisites, and prerequisites — before you speak to your advisor.</p>
+      </div>
+      <div class="drop-zone" id="drop-zone">
+        <p>Drag &amp; drop the CSV file here, or click below</p>
+        <button class="btn-upload" onclick="document.getElementById('csvFile').click()">
+          📂 &nbsp;Choose config file (.csv)
+        </button>
+      </div>
+    </div>
+
+    <div class="legend-box">
+      <h3>Symbols used in this tool</h3>
+      <div class="legend-item">
+        <span class="tag tag-coreq">◊ Co-requisite</span>
+        <span style="color:var(--gray-600)">This course must be taken alongside a paired practical (or vice versa).</span>
+      </div>
+      <div class="legend-item">
+        <span class="tag tag-prereq">▲ Prerequisite</span>
+        <span style="color:var(--gray-600)">You must have completed specific earlier courses before enrolling.</span>
+      </div>
+    </div>
+
+    <div class="upload-note">
+      🔒 <strong>Your data stays on your device.</strong> This tool runs entirely in your browser. No information is uploaded to any server.
+    </div>
+
+  </div>
+
+  <input type="file" id="csvFile" accept=".csv">
+
+  <!-- ── PLANNER SCREEN ── -->
+  <div id="planner-screen">
+
+    <!-- STEP 1: COURSES -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">1</div>
+        <h2>Select Your Courses</h2>
+        <span class="card-hint">2 courses from different time slots</span>
+      </div>
+      <div class="card-body">
+
+        <div class="field">
+          <label class="field-label">Course 1</label>
+          <div class="select-wrap">
+            <select id="course1"><option value="">— Select a course —</option></select>
+          </div>
+          <div class="course-info" id="info-c1"></div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="field">
+          <label class="field-label">Course 2</label>
+          <div class="select-wrap">
+            <select id="course2"><option value="">— Select a course —</option></select>
+          </div>
+          <div class="course-info" id="info-c2"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- STEP 2: PRACTICAL -->
+    <div class="card">
+      <div class="card-header">
+        <div class="step-num">2</div>
+        <h2>Select Your Practical</h2>
+        <span class="card-hint">Must not overlap with course days</span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label class="field-label">Practical / Skill</label>
+          <div class="select-wrap">
+            <select id="labSelect"><option value="">— Select a practical —</option></select>
+          </div>
+          <div id="lab-count" class="lab-count"></div>
+          <div class="course-info" id="info-lab"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: CHECKS -->
+    <div class="card" id="checks-card">
+      <div class="card-header">
+        <div class="step-num">3</div>
+        <h2>Checks &amp; Confirmations</h2>
+        <span class="status-pill status-pending" id="checks-status">— Select courses first</span>
+      </div>
+      <div class="card-body" id="checks-body">
+        <div class="empty-state">
+          <span class="ei">✅</span>
+          <p>Select your courses above to see prerequisite and co-requisite checks.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="card" id="summary-card">
+      <div class="card-header">
+        <div class="step-num done">✓</div>
+        <h2>Your Plan</h2>
+        <span class="status-pill status-pending" id="plan-status">Incomplete</span>
+      </div>
+
+      <!-- Print-only header -->
+      <div class="print-only" style="padding:16px 22px 0; border-bottom:1px solid var(--gray-100); margin-bottom:0">
+        <p style="font-size:12px;color:var(--gray-500)">
+          MSP Course Planner &nbsp;·&nbsp; <span id="print-period"></span> &nbsp;·&nbsp;
+          Printed: <span id="print-date"></span>
+        </p>
+        <p style="font-size:11px;color:var(--gray-400);margin-top:4px">
+          This plan is for self-preparation only. Course registration must be confirmed with your academic advisor.
+        </p>
+      </div>
+
+      <div id="summary-body" style="padding:22px">
+        <div class="empty-state">
+          <span class="ei">📋</span>
+          <p>Your selected plan will appear here once you choose your courses.</p>
+        </div>
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-orange" id="btn-print" onclick="window.print()" disabled>
+          🖨️ &nbsp;Print / Save as PDF
+        </button>
+        <button class="btn btn-ghost" onclick="resetAll()">
+          ↺ &nbsp;Start over
+        </button>
+        <span class="action-note">
+          This plan is for your own preparation only.<br>Always confirm registration with your academic advisor.
+        </span>
+      </div>
+    </div>
+
+  </div><!-- /planner-screen -->
+
+</main>
+
+<footer>
+  MSP Course Planner &nbsp;·&nbsp; Maastricht Science Programme, Faculty of Science and Engineering &nbsp;·&nbsp;
+  This tool runs locally in your browser. No data is sent to any server.
+</footer>
+
+<script>
+// ======================================================
+// STATE
+// ======================================================
+let courses = [];
+let labs = [];
+let configVersion = '';
+let configPeriod = '';
+let configYear = '';
+let prereqAck = {};
+
+// ======================================================
+// FILE UPLOAD
+// ======================================================
+const csvInput = document.getElementById('csvFile');
+const dropZone = document.getElementById('drop-zone');
+
+csvInput.addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (f) readFile(f);
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) readFile(f);
+});
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    parseAndLoad(e.target.result);
+  };
+  reader.readAsText(file);
+}
+
+// ======================================================
+// CSV PARSING
+// ======================================================
+function parseRow(row) {
+  const res = [];
+  let inQ = false, cur = '';
+  for (let i = 0; i < row.length; i++) {
+    const ch = row[i];
+    if (ch === '"') { inQ = !inQ; continue; }
+    if (ch === ',' && !inQ) { res.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  res.push(cur.trim());
+  return res;
+}
+
+function parseAndLoad(text) {
+  courses = [];
+  labs = [];
+  prereqAck = {};
+  configVersion = '';
+  configPeriod = '';
+  configYear = '';
+
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  let headerIdx = -1;
+
+  for (let i = 0; i < lines.length; i++) {
+    const cells = parseRow(lines[i]);
+    // Extract version metadata
+    if (cells[0] === 'Version' && i + 1 < lines.length) {
+      const meta = parseRow(lines[i + 1]);
+      configVersion = meta[0] || '';
+      configPeriod  = meta[1] || '';
+      configYear    = meta[2] || '';
+    }
+    // Find header row
+    if (cells[0] === 'Slot') { headerIdx = i; break; }
+  }
+
+  if (headerIdx < 0) {
+    alert('Could not find a valid config header row. Please check the CSV file.');
+    return;
+  }
+
+  const headers = parseRow(lines[headerIdx]);
+
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const row = parseRow(lines[i]);
+    if (row.length < 3 || !row[1]) continue;
+
+    const entry = {};
+    headers.forEach((h, idx) => { entry[h] = (row[idx] || '').trim(); });
+
+    entry.Corequisite      = entry.Corequisite?.toUpperCase() === 'TRUE';
+    entry.Prerequisite     = entry.Prerequisite?.toUpperCase() === 'TRUE';
+    entry.Days             = entry.Days ? entry.Days.split(/\s*,\s*/).map(d => d.trim()).filter(Boolean) : [];
+    entry.CorequisiteOf    = (entry.CorequisiteOf || '').trim();
+    entry.PrerequisiteCodes = (entry.PrerequisiteCodes || '').trim();
+
+    if (entry.Slot) courses.push(entry);
+    else labs.push(entry);
+  }
+
+  updateHeaderMeta();
+  buildCourse1();
+  buildCourse2(null);
+  buildLabs(new Set());
+  updateChecks();
+  updateSummary();
+  showPlanner();
+}
+
+// ======================================================
+// HEADER META
+// ======================================================
+function updateHeaderMeta() {
+  const p = document.getElementById('meta-period');
+  const v = document.getElementById('meta-version');
+  const c = document.getElementById('meta-counts');
+
+  if (configPeriod && configYear) {
+    p.textContent = `📅 Period ${configPeriod} · ${configYear}`;
+  } else {
+    p.textContent = '📅 Loaded';
+  }
+
+  if (configVersion) {
+    v.innerHTML = `<span class="badge badge-sky">Config v${configVersion}</span>`;
+    document.getElementById('meta-sep1').style.display = '';
+    v.style.display = '';
+  }
+
+  c.textContent = `${courses.length} courses · ${labs.length} practicals`;
+  document.getElementById('meta-sep2').style.display = '';
+  c.style.display = '';
+
+  // Print info
+  document.getElementById('print-period').textContent =
+    configPeriod && configYear ? `Period ${configPeriod}, ${configYear}` : '';
+  document.getElementById('print-date').textContent =
+    new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+// ======================================================
+// SCREENS
+// ======================================================
+function showPlanner() {
+  document.getElementById('upload-screen').style.display = 'none';
+  document.getElementById('planner-screen').style.display = 'block';
+}
+
+// ======================================================
+// DROPDOWN BUILDERS
+// ======================================================
+const SLOT_DAYS = {};
+
+function buildCourse1() {
+  const sel = document.getElementById('course1');
+  sel.innerHTML = '<option value="">— Select a course —</option>';
+  const grouped = groupBySlot(courses);
+  appendOptgroups(sel, grouped, null);
+}
+
+function buildCourse2(excludeSlot) {
+  const sel = document.getElementById('course2');
+  const prevVal = sel.value;
+  sel.innerHTML = '<option value="">— Select a course —</option>';
+  const grouped = groupBySlot(courses, excludeSlot);
+  appendOptgroups(sel, grouped, null);
+  // Restore value if still present
+  if (prevVal && [...sel.options].some(o => o.value === prevVal)) {
+    sel.value = prevVal;
+  }
+}
+
+function groupBySlot(arr, excludeSlot = null) {
+  const g = {};
+  arr.forEach(c => {
+    if (c.Slot && c.Slot === excludeSlot) return;
+    if (!g[c.Slot]) g[c.Slot] = [];
+    g[c.Slot].push(c);
+  });
+  return g;
+}
+
+function appendOptgroups(sel, grouped, _unused) {
+  Object.keys(grouped).sort().forEach(slot => {
+    const og = document.createElement('optgroup');
+    og.label = slot ? `Slot ${slot}` : 'Other';
+    grouped[slot].forEach(c => {
+      const flags = [c.Corequisite ? '◊' : '', c.Prerequisite ? '▲' : ''].filter(Boolean).join(' ');
+      const opt = new Option(`${c.Code} — ${c.Title}${flags ? '  ' + flags : ''}`, c.Code);
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+}
+
+function buildLabs(usedDays) {
+  const sel = document.getElementById('labSelect');
+  const prevVal = sel.value;
+  sel.innerHTML = '<option value="">— Select a practical —</option>';
+
+  const compatible = labs.filter(l => !l.Days.some(d => usedDays.has(d)));
+
+  compatible.forEach(l => {
+    const flags = [l.Corequisite ? '◊' : '', l.Prerequisite ? '▲' : ''].filter(Boolean).join(' ');
+    const opt = new Option(`${l.Code} — ${l.Title}${flags ? '  ' + flags : ''}`, l.Code);
+    sel.appendChild(opt);
+  });
+
+  if (prevVal && [...sel.options].some(o => o.value === prevVal)) sel.value = prevVal;
+
+  const countEl = document.getElementById('lab-count');
+  if (usedDays.size === 0) {
+    countEl.textContent = `${labs.length} practicals available`;
+  } else {
+    countEl.textContent = `${compatible.length} of ${labs.length} practicals are compatible with your course schedule`;
+  }
+
+  return compatible;
+}
+
+// ======================================================
+// GETTERS
+// ======================================================
+function getCourse1() {
+  const v = document.getElementById('course1').value;
+  return courses.find(c => c.Code === v) || null;
+}
+function getCourse2() {
+  const v = document.getElementById('course2').value;
+  return courses.find(c => c.Code === v) || null;
+}
+function getLab() {
+  const v = document.getElementById('labSelect').value;
+  return labs.find(l => l.Code === v) || null;
+}
+
+// ======================================================
+// COURSE INFO PANELS
+// ======================================================
+function fmtDay(d) { return d.replace('AM', ' AM').replace('PM', ' PM'); }
+
+function showCoursePanel(course, elId) {
+  const el = document.getElementById(elId);
+  if (!course) { el.classList.remove('show'); return; }
+
+  const chips = course.Days.map(d => `<span class="day-chip">${fmtDay(d)}</span>`).join('');
+  const tags  = [
+    course.Corequisite ? `<span class="tag tag-coreq">◊ Co-requisite</span>` : '',
+    course.Prerequisite ? `<span class="tag tag-prereq">▲ Prerequisite</span>` : ''
+  ].filter(Boolean).join('');
+
+  el.innerHTML = `
+    <div class="info-row">
+      <span class="slot-badge slot-${course.Slot}">SLOT ${course.Slot}</span>
+      <div class="day-chips">${chips}</div>
+      ${tags}
+    </div>
+    <div class="info-row">
+      <span class="info-coordinator">Coordinator: ${course.Coordinator}</span>
+    </div>`;
+  el.classList.add('show');
+}
+
+function showLabPanel(lab, elId) {
+  const el = document.getElementById(elId);
+  if (!lab) { el.classList.remove('show'); return; }
+
+  const chips = lab.Days.map(d => `<span class="day-chip">${fmtDay(d)}</span>`).join('');
+  const tags  = [
+    lab.Corequisite ? `<span class="tag tag-coreq">◊ Co-requisite</span>` : '',
+    lab.Prerequisite ? `<span class="tag tag-prereq">▲ Prerequisite</span>` : ''
+  ].filter(Boolean).join('');
+
+  el.innerHTML = `
+    <div class="info-row">
+      <div class="day-chips">${chips}</div>
+      ${tags}
+    </div>
+    <div class="info-row">
+      <span class="info-coordinator">Coordinator: ${lab.Coordinator}</span>
+    </div>`;
+  el.classList.add('show');
+}
+
+// ======================================================
+// CHECKS
+// ======================================================
+function updateChecks() {
+  const c1  = getCourse1();
+  const c2  = getCourse2();
+  const lab = getLab();
+  const selected = [c1, c2].filter(Boolean);
+
+  const statusEl = document.getElementById('checks-status');
+  const bodyEl   = document.getElementById('checks-body');
+
+  if (selected.length === 0) {
+    statusEl.className = 'status-pill status-pending';
+    statusEl.textContent = '— Select courses first';
+    bodyEl.innerHTML = `<div class="empty-state"><span class="ei">✅</span><p>Select your courses above to see checks.</p></div>`;
+    return;
+  }
+
+  let html = '';
+  let hasUnsatisfiedCoreq = false;
+  let hasUnconfirmedPrereq = false;
+
+  // ── CO-REQUISITE CHECKS ──
+  const coreqItems = [];
+
+  // Course → paired item (usually a lab)
+  for (const course of selected) {
+    if (course.Corequisite && course.CorequisiteOf) {
+      const reqCode = course.CorequisiteOf;
+      const reqLab  = labs.find(l => l.Code === reqCode);
+      const reqName = reqLab?.Title || courses.find(c => c.Code === reqCode)?.Title || reqCode;
+      const satisfied = lab && lab.Code === reqCode;
+      coreqItems.push({ from: course, reqCode, reqName, reqType: reqLab ? 'practical' : 'course', satisfied });
+    }
+  }
+
+  // Lab → paired course
+  if (lab && lab.Corequisite && lab.CorequisiteOf) {
+    const reqCode   = lab.CorequisiteOf;
+    const reqName   = courses.find(c => c.Code === reqCode)?.Title || reqCode;
+    const satisfied = selected.some(c => c.Code === reqCode);
+    const alreadyCovered = coreqItems.some(i => i.from.Code === reqCode && i.reqCode === lab.Code);
+    if (!alreadyCovered) {
+      coreqItems.push({ from: lab, reqCode, reqName, reqType: 'course', satisfied });
+    }
+  }
+
+  if (coreqItems.length > 0) {
+    html += `<p class="section-label">Co-requisites</p>`;
+    coreqItems.forEach(item => {
+      if (item.satisfied) {
+        html += `<div class="alert alert-ok">
+          <span class="alert-icon">✓</span>
+          <div class="alert-body">
+            <strong>Co-requisite satisfied</strong>
+            <p><em>${item.from.Code}</em> requires <em>${item.reqCode} — ${item.reqName}</em> as a co-requisite. ✓ Already in your selection.</p>
+          </div></div>`;
+      } else {
+        hasUnsatisfiedCoreq = true;
+        html += `<div class="alert alert-error">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-body">
+            <strong>Missing co-requisite</strong>
+            <p><em>${item.from.Code} — ${item.from.Title}</em> must be taken together with the ${item.reqType} <strong>${item.reqCode} — ${item.reqName}</strong>. Please add it to your selection.</p>
+          </div></div>`;
+      }
+    });
+  }
+
+  // ── PREREQUISITE CHECKS ──
+  const prereqItems = [];
+  for (const item of [...selected, lab].filter(Boolean)) {
+    if (item.Prerequisite && item.PrerequisiteCodes) {
+      if (!(item.Code in prereqAck)) prereqAck[item.Code] = false;
+      prereqItems.push(item);
+    }
+  }
+
+  if (prereqItems.length > 0) {
+    if (html) html += '<div style="height:14px"></div>';
+    html += `<p class="section-label">Prerequisites — please confirm</p>`;
+    prereqItems.forEach(item => {
+      const confirmed = prereqAck[item.Code];
+      if (!confirmed) hasUnconfirmedPrereq = true;
+      const fmtPrereq = formatPrereqs(item.PrerequisiteCodes);
+      html += `
+        <div class="prereq-block ${confirmed ? 'confirmed' : ''}" id="pb-${item.Code}">
+          <input type="checkbox" id="ck-${item.Code}" ${confirmed ? 'checked' : ''}
+            onchange="ackPrereq('${item.Code}', this.checked)">
+          <label for="ck-${item.Code}">
+            To take <strong>${item.Code} — ${item.Title}</strong>, you must have completed:
+            <span class="pcode">${fmtPrereq}</span>.
+            <span class="prereq-hint">☝ Tick this box to confirm you have met this requirement.</span>
+          </label>
+        </div>`;
+    });
+  }
+
+  // ── NOTHING TO CHECK ──
+  if (coreqItems.length === 0 && prereqItems.length === 0) {
+    html = `<div class="alert alert-ok">
+      <span class="alert-icon">✓</span>
+      <div class="alert-body">
+        <strong>No prerequisites or co-requisites</strong>
+        <p>Your current selection has no additional requirements to check.</p>
+      </div></div>`;
+  }
+
+  bodyEl.innerHTML = html;
+
+  // Status pill
+  if (hasUnsatisfiedCoreq) {
+    statusEl.className = 'status-pill status-error';
+    statusEl.textContent = '⚠ Missing co-requisite';
+  } else if (hasUnconfirmedPrereq) {
+    statusEl.className = 'status-pill status-warn';
+    statusEl.textContent = '! Confirm prerequisites';
+  } else {
+    statusEl.className = 'status-pill status-ok';
+    statusEl.textContent = '✓ All checks passed';
+  }
+}
+
+function ackPrereq(code, checked) {
+  prereqAck[code] = checked;
+  updateChecks();
+  updateSummary();
+}
+
+function formatPrereqs(str) {
+  // + = AND, / = OR
+  return str.split('+').map(part => {
+    const orParts = part.trim().split('/').map(p => `<strong>${p.trim()}</strong>`);
+    return orParts.length > 1 ? orParts.join(' <em>or</em> ') : orParts[0];
+  }).join(' <em>and</em> ');
+}
+
+// ======================================================
+// SUMMARY
+// ======================================================
+function updateSummary() {
+  const c1  = getCourse1();
+  const c2  = getCourse2();
+  const lab = getLab();
+  const selected = [c1, c2].filter(Boolean);
+
+  const statusEl = document.getElementById('plan-status');
+  const bodyEl   = document.getElementById('summary-body');
+  const btnPrint = document.getElementById('btn-print');
+
+  if (selected.length === 0) {
+    statusEl.className = 'status-pill status-pending';
+    statusEl.textContent = 'Incomplete';
+    bodyEl.innerHTML = `<div class="empty-state"><span class="ei">📋</span><p>Your selected plan will appear here.</p></div>`;
+    btnPrint.disabled = true;
+    return;
+  }
+
+  // Calculate issues
+  const issues = [];
+
+  // Co-req issues
+  for (const course of selected) {
+    if (course.Corequisite && course.CorequisiteOf) {
+      if (!lab || lab.Code !== course.CorequisiteOf) {
+        issues.push(`Missing co-requisite for ${course.Code}`);
+      }
+    }
+  }
+  if (lab && lab.Corequisite && lab.CorequisiteOf) {
+    const satisfied = selected.some(c => c.Code === lab.CorequisiteOf);
+    if (!satisfied) issues.push(`Missing co-requisite for ${lab.Code}`);
+  }
+
+  // Unconfirmed prereqs
+  for (const item of [...selected, lab].filter(Boolean)) {
+    if (item.Prerequisite && item.PrerequisiteCodes && !prereqAck[item.Code]) {
+      issues.push(`Unconfirmed prerequisite for ${item.Code}`);
+    }
+  }
+
+  const isComplete = selected.length === 2 && lab && issues.length === 0;
+
+  // Build table rows
+  let rows = '';
+
+  for (const course of selected) {
+    const chips = course.Days.map(d => `<span class="day-chip">${fmtDay(d)}</span>`).join(' ');
+    rows += `<tr>
+      <td><span class="type-chip">Course</span></td>
+      <td>
+        <div class="summary-code">${course.Code}</div>
+        <div class="summary-name">${course.Title}</div>
+      </td>
+      <td><span class="slot-badge slot-${course.Slot}">SLOT ${course.Slot}</span></td>
+      <td><div class="day-chips">${chips}</div></td>
+      <td class="summary-coord">${course.Coordinator}</td>
+    </tr>`;
+  }
+
+  if (lab) {
+    const chips = lab.Days.map(d => `<span class="day-chip">${fmtDay(d)}</span>`).join(' ');
+    rows += `<tr>
+      <td><span class="type-chip">Practical</span></td>
+      <td>
+        <div class="summary-code">${lab.Code}</div>
+        <div class="summary-name">${lab.Title}</div>
+      </td>
+      <td>—</td>
+      <td><div class="day-chips">${chips}</div></td>
+      <td class="summary-coord">${lab.Coordinator}</td>
+    </tr>`;
+  } else {
+    rows += `<tr>
+      <td><span class="type-chip">Practical</span></td>
+      <td colspan="4" style="color:var(--gray-400);font-style:italic;font-size:13px">No practical selected yet</td>
+    </tr>`;
+  }
+
+  let statusBlock = '';
+  if (isComplete) {
+    statusBlock = `<div class="alert alert-ok" style="margin-top:18px">
+      <span class="alert-icon">✓</span>
+      <div class="alert-body">
+        <strong>Plan is complete — ready to print</strong>
+        <p>All checks passed. Print or save this page as a PDF to bring to your advising session.</p>
+      </div></div>`;
+  } else if (issues.length > 0) {
+    statusBlock = `<div class="alert alert-warn" style="margin-top:18px">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-body">
+        <strong>Plan has outstanding issues</strong>
+        <p>${issues.join(' · ')}</p>
+      </div></div>`;
+  }
+
+  bodyEl.innerHTML = `
+    <div style="overflow-x:auto">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Course / Practical</th>
+            <th>Slot</th>
+            <th>Schedule</th>
+            <th>Coordinator</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    ${statusBlock}`;
+
+  // Plan status pill
+  if (isComplete) {
+    statusEl.className = 'status-pill status-ok';
+    statusEl.textContent = '✓ Ready to print';
+    btnPrint.disabled = false;
+  } else if (selected.length > 0 || lab) {
+    statusEl.className = issues.length > 0 ? 'status-pill status-warn' : 'status-pill status-pending';
+    statusEl.textContent = issues.length > 0 ? '⚠ Issues to resolve' : 'Incomplete';
+    btnPrint.disabled = issues.length > 0;
+  } else {
+    statusEl.className = 'status-pill status-pending';
+    statusEl.textContent = 'Incomplete';
+    btnPrint.disabled = true;
+  }
+}
+
+// ======================================================
+// EVENT LISTENERS
+// ======================================================
+document.getElementById('course1').addEventListener('change', () => {
+  const c1 = getCourse1();
+  showCoursePanel(c1, 'info-c1');
+  // Rebuild course 2, excluding c1's slot
+  buildCourse2(c1?.Slot || null);
+  // Check if current c2 is now invalid (same slot)
+  const c2 = getCourse2();
+  if (!c2) {
+    document.getElementById('info-c2').classList.remove('show');
+    delete prereqAck[document.getElementById('course2').value];
+  }
+  refreshLabs();
+  updateChecks();
+  updateSummary();
+});
+
+document.getElementById('course2').addEventListener('change', () => {
+  showCoursePanel(getCourse2(), 'info-c2');
+  refreshLabs();
+  updateChecks();
+  updateSummary();
+});
+
+document.getElementById('labSelect').addEventListener('change', () => {
+  showLabPanel(getLab(), 'info-lab');
+  updateChecks();
+  updateSummary();
+});
+
+function refreshLabs() {
+  const c1 = getCourse1();
+  const c2 = getCourse2();
+  const usedDays = new Set([...(c1?.Days || []), ...(c2?.Days || [])]);
+  buildLabs(usedDays);
+  // Refresh lab panel if selection changed
+  showLabPanel(getLab(), 'info-lab');
+}
+
+// ======================================================
+// RESET
+// ======================================================
+function resetAll() {
+  document.getElementById('course1').value = '';
+  document.getElementById('course2').value = '';
+  document.getElementById('labSelect').value = '';
+  ['info-c1', 'info-c2', 'info-lab'].forEach(id => document.getElementById(id).classList.remove('show'));
+  prereqAck = {};
+  buildCourse2(null);
+  buildLabs(new Set());
+  updateChecks();
+  updateSummary();
+}
+</script>
+</body>
+</html>
