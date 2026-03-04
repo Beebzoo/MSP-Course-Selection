@@ -19,7 +19,7 @@
   --g0:#F8FAFC;--g1:#F1F5F9;--g2:#E2E8F0;--g3:#CBD5E1;
   --g4:#94A3B8;--g5:#64748B;--g7:#334155;--g9:#0F172A;
   --sa-bg:#EFF6FF;--sa:#1D4ED8;--sb-bg:#F0FDF4;--sb:#166534;
-  --sc-bg:#FEFCE8;--sc:#854D0E;--sd-bg:#F5F3FF;--sd:#5B21B6;
+  --sc-bg:#FEFCE8;--showScreen:#854D0E;--sd-bg:#F5F3FF;--sd:#5B21B6;
   --se-bg:#FFF1F2;--se:#9F1239;
   --r:10px;--rs:6px;
   --sh:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);
@@ -99,7 +99,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .cpanel{display:none;margin-top:8px;padding:10px 14px;background:var(--g0);border:1px solid var(--g1);border-radius:var(--rs);font-size:12.5px} .cpanel.show{display:block}
 .crow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px} .crow:last-child{margin-bottom:0}
 .slotb{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.05em}
-.sl-A{background:var(--sa-bg);color:var(--sa)} .sl-B{background:var(--sb-bg);color:var(--sb)} .sl-C{background:var(--sc-bg);color:var(--sc)} .sl-D{background:var(--sd-bg);color:var(--sd)} .sl-E{background:var(--se-bg);color:var(--se)}
+.sl-A{background:var(--sa-bg);color:var(--sa)} .sl-B{background:var(--sb-bg);color:var(--sb)} .sl-C{background:var(--sc-bg);color:var(--showScreen)} .sl-D{background:var(--sd-bg);color:var(--sd)} .sl-E{background:var(--se-bg);color:var(--se)}
 .tg{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
 .tg-co{background:var(--inf-bg);color:var(--inf)} .tg-pre{background:var(--warn-bg);color:var(--warn)}
 .tg-elig{background:var(--ok-bg);color:var(--ok)} .tg-inelig{background:var(--err-bg);color:var(--err)}
@@ -137,7 +137,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tt-cell{border-radius:4px;padding:5px 6px;font-size:10.5px;line-height:1.3;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-weight:500}
 .tt-course{background:var(--sa-bg);color:var(--sa);border:1px solid rgba(29,78,216,.15)}
 .tt-course.sl-B{background:var(--sb-bg);color:var(--sb);border-color:rgba(22,101,52,.15)}
-.tt-course.sl-C{background:var(--sc-bg);color:var(--sc);border-color:rgba(133,77,14,.15)}
+.tt-course.sl-C{background:var(--sc-bg);color:var(--showScreen);border-color:rgba(133,77,14,.15)}
 .tt-course.sl-D{background:var(--sd-bg);color:var(--sd);border-color:rgba(91,33,182,.15)}
 .tt-course.sl-E{background:var(--se-bg);color:var(--se);border-color:rgba(159,18,57,.15)}
 .tt-lab{background:var(--inf-bg);color:var(--inf);border:1px solid rgba(12,74,110,.15)}
@@ -258,9 +258,9 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   <div id="planner">
     <div id="tbanner" class="tbanner" style="display:none"></div>
     <div class="plan-tabs">
-      <button class="ptab active" id="tab-A" onclick="sw('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
-      <button class="ptab" id="tab-B" onclick="sw('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
-      <button class="ptab" id="tab-C" onclick="sw('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
+      <button class="ptab active" id="tab-A" onclick="switchPlan('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
+      <button class="ptab" id="tab-B" onclick="switchPlan('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
+      <button class="ptab" id="tab-C" onclick="switchPlan('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
       <button class="ptab ptab-cmp" id="tab-cmp" onclick="toggleCmp()">&#9638; Compare</button>
     </div>
     <div id="planview">
@@ -295,7 +295,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       <div id="sumbd" style="padding:24px"><div class="emptys"><span class="ei">&#128203;</span><p>Your plan will appear here once you select courses.</p></div></div>
       <div class="actbar">
         <button class="btn btn-or" id="btnp" onclick="window.print()" disabled>&#128424;&nbsp; Save as PDF</button>
-        <button class="btn btn-gh" onclick="rp()">&#8635;&nbsp; Reset plan</button>
+        <button class="btn btn-gh" onclick="resetPlan()">&#8635;&nbsp; Reset plan</button>
         <span class="actnote">For self-preparation only.<br>Always confirm with your academic advisor.</span>
       </div>
     </div>
@@ -310,10 +310,10 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 <script>
 const AUTO='FrameSchedule_P5_v1.csv';
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
-const PLANS={A:ep(),B:ep(),C:ep()};
+const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
 let act='A',cmpMode=false;
 let transcript=null; // {name, pnumber, completed: Set of course codes}
-function ep(){return{c1:'',c2:'',lab:'',ack:{}};}
+function emptyPlan(){return{c1:'',c2:'',lab:'',ack:{}};}
 
 // ── PDF Transcript Parsing ──
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -378,7 +378,7 @@ function parseTranscript(text){
   });
 
   // Refresh current view
-  if(courses.length)sw(act);
+  if(courses.length)switchPlan(act);
 }
 
 function autoCheckPrereqs(planKey){
@@ -432,25 +432,25 @@ function clearTranscript(){
   updateTranscriptUI();
   // Reset all acks
   Object.keys(PLANS).forEach(k=>{PLANS[k].ack={};});
-  sw(act);
+  switchPlan(act);
 }
 
 // ── CSV / Config ──
 window.addEventListener('DOMContentLoaded',()=>{
-  fetch(AUTO).then(r=>{if(!r.ok)throw 0;return r.text();}).then(load).catch(()=>sc('err'));
+  fetch(AUTO).then(r=>{if(!r.ok)throw 0;return r.text();}).then(load).catch(()=>showScreen('err'));
 });
 document.getElementById('csvf').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>load(ev.target.result);r.readAsText(f);e.target.value='';
 });
 
-function sc(s){
+function showScreen(s){
   document.getElementById('loading').style.display=s==='ld'?'flex':'none';
   document.getElementById('errscr').style.display=s==='err'?'flex':'none';
   document.getElementById('planner').style.display=s==='pl'?'block':'none';
 }
 
-function pr(row){
+function parseRow(row){
   const res=[];let q=false,c='';
   for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='"'){q=!q;continue;}if(ch===','&&!q){res.push(c.trim());c='';continue;}c+=ch;}
   res.push(c.trim());return res;
@@ -461,14 +461,14 @@ function load(text){
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
   let hi=-1;
   for(let i=0;i<lines.length;i++){
-    const c=pr(lines[i]);
-    if(c[0]==='Version'&&i+1<lines.length){const m=pr(lines[i+1]);cfgV=m[0]||'';cfgP=m[1]||'';cfgY=m[2]||'';}
+    const c=parseRow(lines[i]);
+    if(c[0]==='Version'&&i+1<lines.length){const m=parseRow(lines[i+1]);cfgV=m[0]||'';cfgP=m[1]||'';cfgY=m[2]||'';}
     if(c[0]==='Slot'){hi=i;break;}
   }
-  if(hi<0){sc('err');return;}
-  const hdrs=pr(lines[hi]);
+  if(hi<0){showScreen('err');return;}
+  const hdrs=parseRow(lines[hi]);
   for(let i=hi+1;i<lines.length;i++){
-    const row=pr(lines[i]);if(row.length<3||!row[1])continue;
+    const row=parseRow(lines[i]);if(row.length<3||!row[1])continue;
     const e={};hdrs.forEach((h,idx)=>e[h]=(row[idx]||'').trim());
     e.Corequisite=e.Corequisite?.toUpperCase()==='TRUE';
     e.Prerequisite=e.Prerequisite?.toUpperCase()==='TRUE';
@@ -485,37 +485,37 @@ function load(text){
   document.getElementById('pd').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   // Auto-check prereqs if transcript already loaded
   if(transcript)Object.keys(PLANS).forEach(k=>autoCheckPrereqs(k));
-  sw('A');sc('pl');
+  switchPlan('A');showScreen('pl');
 }
 
 // ── Plan switching ──
-function sw(k){
+function switchPlan(k){
   if(cmpMode)toggleCmp();
   act=k;
   document.querySelectorAll('.ptab:not(.ptab-cmp)').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+k).classList.add('active');
   const p=PLANS[k];
-  bc1();
+  buildCourse1();
   const cv1=courses.find(c=>c.Code===p.c1)||null;
   document.getElementById('c1').value=p.c1;
-  bc2(cv1?.Slot||null);
+  buildCourse2(cv1?.Slot||null);
   document.getElementById('c2').value=p.c2;
   const cv2=courses.find(c=>c.Code===p.c2)||null;
   const used=new Set([...(cv1?.Days||[]),...(cv2?.Days||[])]);
-  bl(used);
+  buildLabs(used);
   document.getElementById('lab').value=p.lab;
-  pan(cv1,'pi1',false);pan(cv2,'pi2',false);
-  pan(labs.find(l=>l.Code===p.lab)||null,'pil',true);
-  chk();sum();buildTT();
+  showPanel(cv1,'pi1',false);showPanel(cv2,'pi2',false);
+  showPanel(labs.find(l=>l.Code===p.lab)||null,'pil',true);
+  checkPrereqs();buildSummary();buildTT();
 }
 
 function save(){const p=PLANS[act];p.c1=document.getElementById('c1').value;p.c2=document.getElementById('c2').value;p.lab=document.getElementById('lab').value;}
 
-function bc1(){const s=document.getElementById('c1');s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';ag(s,grp(courses,null));}
-function bc2(ex){const s=document.getElementById('c2'),pv=s.value;s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';ag(s,grp(courses,ex));if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;}
-function grp(arr,ex){const g={};arr.forEach(c=>{if(c.Slot===ex&&ex)return;if(!g[c.Slot])g[c.Slot]=[];g[c.Slot].push(c);});return g;}
+function buildCourse1(){const s=document.getElementById('c1');s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,null));}
+function buildCourse2(ex){const s=document.getElementById('c2'),pv=s.value;s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,ex));if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;}
+function groupBySlot(arr,ex){const g={};arr.forEach(c=>{if(c.Slot===ex&&ex)return;if(!g[c.Slot])g[c.Slot]=[];g[c.Slot].push(c);});return g;}
 
-function ag(s,g){
+function addGroupedOptions(s,g){
   Object.keys(g).sort().forEach(sl=>{
     const og=document.createElement('optgroup');
     og.label=sl?`Slot ${sl}`:'Other';
@@ -535,7 +535,7 @@ function ag(s,g){
   });
 }
 
-function bl(used){
+function buildLabs(used){
   const s=document.getElementById('lab'),pv=s.value;
   s.innerHTML='<option value="">\u2014 Select a practical \u2014</option>';
   const ok=labs.filter(l=>!l.Days.some(d=>used.has(d)));
@@ -555,15 +555,15 @@ function bl(used){
   document.getElementById('labct').textContent=used.size===0?`${labs.length} practicals available`:`${ok.length} of ${labs.length} practicals compatible with your courses`;
 }
 
-const gc1=()=>courses.find(c=>c.Code===document.getElementById('c1').value)||null;
-const gc2=()=>courses.find(c=>c.Code===document.getElementById('c2').value)||null;
-const gl=()=>labs.find(l=>l.Code===document.getElementById('lab').value)||null;
-function fd(d){return d.replace('AM',' AM').replace('PM',' PM');}
+const getCourse1=()=>courses.find(c=>c.Code===document.getElementById('c1').value)||null;
+const getCourse2=()=>courses.find(c=>c.Code===document.getElementById('c2').value)||null;
+const getLab=()=>labs.find(l=>l.Code===document.getElementById('lab').value)||null;
+function formatDay(d){return d.replace('AM',' AM').replace('PM',' PM');}
 
-function pan(item,id,isLab){
+function showPanel(item,id,isLab){
   const el=document.getElementById(id);
   if(!item){el.classList.remove('show');return;}
-  const chips=item.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+  const chips=item.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
   const tags=[item.Corequisite?'<span class="tg tg-co">\u25ca Co-req</span>':'',item.Prerequisite?'<span class="tg tg-pre">\u25b2 Pre-req</span>':''].filter(Boolean).join('');
   let eligTag='';
   if(transcript&&item.Prerequisite&&item.PrerequisiteCodes){
@@ -579,7 +579,7 @@ const DAYS=['Mon','Tue','Wed','Thu','Fri'];
 const TIMES=['AM','PM'];
 
 function buildTT(){
-  const c1=gc1(),c2=gc2(),lab=gl();
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab();
   const sel=[c1,c2].filter(Boolean);
   const bd=document.getElementById('ttbd');
 
@@ -625,7 +625,7 @@ function buildTTHTML(c1,c2,lab,compact){
 }
 
 // ── Plan status ──
-function pst(k){
+function planStatus(k){
   const p=PLANS[k];
   const c1=courses.find(c=>c.Code===p.c1)||null,c2=courses.find(c=>c.Code===p.c2)||null;
   const lab=labs.find(l=>l.Code===p.lab)||null,sel=[c1,c2].filter(Boolean);
@@ -638,11 +638,11 @@ function pst(k){
   if(iss.includes('co'))return'err';if(iss.includes('pre'))return'warn';return'inc';
 }
 
-function ti(){
+function updateTabIcons(){
   ['A','B','C'].forEach(k=>{
     const t=document.getElementById('tab-'+k),ts=document.getElementById('ts-'+k);
     t.classList.remove('tok','twarn','terr');
-    const s=pst(k);
+    const s=planStatus(k);
     if(s==='ok'){ts.textContent=' \u2713';t.classList.add('tok');}
     else if(s==='warn'){ts.textContent=' \u26a0';t.classList.add('twarn');}
     else if(s==='err'){ts.textContent=' \u26a0';t.classList.add('terr');}
@@ -651,12 +651,12 @@ function ti(){
 }
 
 // ── Checks ──
-function chk(){
-  const c1=gc1(),c2=gc2(),lab=gl(),sel=[c1,c2].filter(Boolean);
+function checkPrereqs(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('chkst'),bEl=document.getElementById('chkbd');
   if(!sel.length){sEl.className='spill sp-pend';sEl.textContent='\u2014 Select courses first';bEl.innerHTML='<div class="emptys"><span class="ei">\u2713</span><p>Select your courses to see checks.</p></div>';return;}
   let html='',badCo=false,unPre=false,coI=[];
-  for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rl=labs.find(l=>l.Code===rc);const rn=rl?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rl?'practical':'course',ok:lab&&lab.Code===rc});}}
+  for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rebuildLabs=labs.find(l=>l.Code===rc);const rn=rebuildLabs?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rebuildLabs?'practical':'course',ok:lab&&lab.Code===rc});}}
   if(lab&&lab.Corequisite&&lab.CorequisiteOf){const rc=lab.CorequisiteOf,rn=courses.find(c=>c.Code===rc)?.Title||rc,sat=sel.some(c=>c.Code===rc);if(!coI.some(i=>i.from.Code===rc&&i.rc===lab.Code))coI.push({from:lab,rc,rn,rt:'course',ok:sat});}
   if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p></div></div>`;}});}
   const preI=[];
@@ -671,11 +671,11 @@ function chk(){
 
       if(transcript&&met){
         // Auto-verified by transcript
-        html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${fp(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
+        html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
       }else if(transcript&&!met){
-        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${fp(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
+        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
       }else{
-        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="ac('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${fp(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
+        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
       }
     });
   }
@@ -684,16 +684,16 @@ function chk(){
   if(badCo){sEl.className='spill sp-err';sEl.textContent='\u26a0 Missing co-requisite';}
   else if(unPre){sEl.className='spill sp-warn';sEl.textContent='! Confirm prerequisites';}
   else{sEl.className='spill sp-ok';sEl.textContent='\u2713 All checks passed';}
-  ti();
+  updateTabIcons();
 }
 
-function ac(code,v){PLANS[act].ack[code]=v;chk();sum();}
+function acknowledgeCheck(code,v){PLANS[act].ack[code]=v;checkPrereqs();buildSummary();}
 
-function fp(s){return s.split('+').map(pt=>{const or=pt.trim().split('/').map(p=>`<strong>${p.trim()}</strong>`);return or.length>1?or.join(' <em>or</em> '):or[0];}).join(' <em>and</em> ');}
+function formatPrereqs(s){return s.split('+').map(pt=>{const or=pt.trim().split('/').map(p=>`<strong>${p.trim()}</strong>`);return or.length>1?or.join(' <em>or</em> '):or[0];}).join(' <em>and</em> ');}
 
 // ── Summary ──
-function sum(){
-  const c1=gc1(),c2=gc2(),lab=gl(),sel=[c1,c2].filter(Boolean);
+function buildSummary(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('planst'),bEl=document.getElementById('sumbd'),btn=document.getElementById('btnp');
   if(!sel.length){sEl.className='spill sp-pend';sEl.textContent='Incomplete';bEl.innerHTML='<div class="emptys"><span class="ei">\ud83d\udccb</span><p>Select courses to see your plan.</p></div>';btn.disabled=true;return;}
   const iss=[];
@@ -705,7 +705,7 @@ function sum(){
   // Course detail rows with prerequisites
   let rows='';
   sel.forEach(c=>{
-    const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    const chips=c.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(c.Prerequisite&&c.PrerequisiteCodes){
       const met=transcript?checkPrereqMet(c.PrerequisiteCodes):p.ack[c.Code];
@@ -719,7 +719,7 @@ function sum(){
     rows+=`<tr><td><span class="tchip">Course</span></td><td><div class="scode">${c.Code}</div><div class="sname">${c.Title}</div>${prereqInfo}${coreqInfo}</td><td><span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></td><td><div class="days">${chips}</div></td><td class="scoord">${c.Coordinator}</td></tr>`;
   });
   if(lab){
-    const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    const chips=lab.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(lab.Prerequisite&&lab.PrerequisiteCodes){
       const met=transcript?checkPrereqMet(lab.PrerequisiteCodes):p.ack[lab.Code];
@@ -805,7 +805,7 @@ function buildCmp(){
     const c2=courses.find(c=>c.Code===p.c2)||null;
     const lab=labs.find(l=>l.Code===p.lab)||null;
     const sel=[c1,c2].filter(Boolean);
-    const st=pst(k);
+    const st=planStatus(k);
 
     let stCls='',stTxt='';
     if(st==='ok'){stCls='cmp-st-ok';stTxt='\u2713 Ready';}
@@ -822,11 +822,11 @@ function buildCmp(){
       html+='<div class="cmp-empty">No courses selected</div>';
     }else{
       sel.forEach(c=>{
-        const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+        const chips=c.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
         html+=`<div class="cmp-item"><div class="ci-type">Course &middot; <span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></div><div class="ci-code">${c.Code}</div><div class="ci-title">${c.Title}</div><div class="ci-days">${chips}</div></div>`;
       });
       if(lab){
-        const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+        const chips=lab.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
         html+=`<div class="cmp-item"><div class="ci-type">Practical</div><div class="ci-code">${lab.Code}</div><div class="ci-title">${lab.Title}</div><div class="ci-days">${chips}</div></div>`;
       }else{
         html+='<div class="cmp-item" style="opacity:.5"><div class="ci-type">Practical</div><div class="ci-title" style="font-style:italic">Not selected</div></div>';
@@ -843,11 +843,11 @@ function buildCmp(){
 }
 
 // ── Event listeners ──
-document.getElementById('c1').addEventListener('change',()=>{save();const c1=gc1();pan(c1,'pi1',false);bc2(c1?.Slot||null);if(!gc2())document.getElementById('pi2').classList.remove('show');rl();chk();sum();buildTT();});
-document.getElementById('c2').addEventListener('change',()=>{save();pan(gc2(),'pi2',false);rl();chk();sum();buildTT();});
-document.getElementById('lab').addEventListener('change',()=>{save();pan(gl(),'pil',true);chk();sum();buildTT();});
-function rl(){const c1=gc1(),c2=gc2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);bl(u);pan(gl(),'pil',true);}
-function rp(){PLANS[act]=ep();sw(act);ti();}
+document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildTT();});
+document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildTT();});
+document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildTT();});
+function rebuildLabs(){const c1=getCourse1(),c2=getCourse2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);buildLabs(u);showPanel(getLab(),'pil',true);}
+function resetPlan(){PLANS[act]=emptyPlan();switchPlan(act);updateTabIcons();}
 </script>
 </body>
 </html>
