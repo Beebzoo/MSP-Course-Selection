@@ -242,7 +242,6 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     <span class="bsep" id="sep2" style="display:none"></span>
     <span id="mc" style="display:none"></span>
     <button class="cfgbtn" onclick="document.getElementById('csvf').click()">&#128194; Load config</button>
-    <button class="cfgbtn" onclick="document.getElementById('pdff').click()">&#128196; Upload transcript</button>
   </div>
 </header>
 <input type="file" id="csvf" accept=".csv" style="display:none">
@@ -770,9 +769,10 @@ function sum(){
   }
 
   bEl.innerHTML=`${stuHtml}<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${sb}`;
-  if(done){sEl.className='spill sp-ok';sEl.textContent='\u2713 Ready to print';btn.disabled=false;}
-  else if(iss.length){sEl.className='spill sp-warn';sEl.textContent='\u26a0 Issues to resolve';btn.disabled=true;}
-  else{sEl.className='spill sp-pend';sEl.textContent='Incomplete';btn.disabled=true;}
+  if(done){sEl.className='spill sp-ok';sEl.textContent='\u2713 Ready to print';}
+  else if(iss.length){sEl.className='spill sp-warn';sEl.textContent='\u26a0 Issues to resolve';}
+  else{sEl.className='spill sp-pend';sEl.textContent='Incomplete';}
+  btn.disabled=!sel.length;
 }
 
 // ── Comparison View ──
