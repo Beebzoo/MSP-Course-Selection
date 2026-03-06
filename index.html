@@ -7,19 +7,50 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+/* ============================================================
+   MSP Course Planner — Stylesheet
+   ============================================================
+   Sections:
+     1. Reset & Design Tokens   — CSS reset + colour/spacing variables
+     2. Header Bar               — Sticky top bar: logos, title, nav, metadata
+     3. Main Layout              — Page container, loading spinner, error screen
+     4. Plan Tabs                — A/B/C plan switcher + Compare button
+     5. Cards                    — Reusable white card containers with step badges
+     6. Form Fields              — Select dropdowns, slot/day badges, info panels
+     7. Status Pills & Alerts    — Coloured status indicators and alert banners
+     8. Prerequisite Boxes       — Checkbox-driven prerequisite confirmations
+     9. Next Steps Card          — Numbered action list + deadline boxes
+    10. Weekly Timetable         — AM/PM × Mon–Fri schedule grid
+    11. Comparison View          — Side-by-side plan comparison (3 columns)
+    12. Summary Table            — Final plan overview table
+    13. Action Bar & Footer      — Print/reset buttons + page footer
+    14. Starred / Shortlist      — Bookmarked courses from the catalogue
+    15. Icons                    — Inline SVG icon sizing utilities
+    16. Nav Links                — Header navigation link styles
+    17. Print Styles             — Overrides for PDF/print output
+    18. Responsive (≤ 900px)     — Comparison grid stacking
+    19. Responsive (≤ 640px)     — Mobile: compact header, smaller cards
+   ============================================================ */
+
+/* ── 1. Reset & Design Tokens ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
+  /* Brand colours — Maastricht University palette */
   --navy:#011B3C;--navy2:#02274F;--navy3:#0A3060;
   --sky:#6ED2EC;--orange:#E87722;--um-red:#BE0028;
+  /* Semantic colours — status feedback (ok / warning / error / info) */
   --ok:#15803D;--ok-bg:#F0FDF4;--ok-bd:#86EFAC;
   --warn:#92400E;--warn-bg:#FFFBEB;--warn-bd:#FCD34D;
   --err:#B91C1C;--err-bg:#FEF2F2;--err-bd:#FCA5A5;
   --inf:#0C4A6E;--inf-bg:#F0F9FF;--inf-bd:#7DD3FC;
+  /* Grey scale — g0 (lightest) through g9 (near-black) */
   --g0:#F8FAFC;--g1:#F1F5F9;--g2:#E2E8F0;--g3:#CBD5E1;
   --g4:#94A3B8;--g5:#64748B;--g7:#334155;--g9:#0F172A;
+  /* Slot colours — one tint per timeslot (A–E) used in badges and timetable */
   --sa-bg:#EFF6FF;--sa:#1D4ED8;--sb-bg:#F0FDF4;--sb:#166534;
   --sc-bg:#FEFCE8;--showScreen:#854D0E;--sd-bg:#F5F3FF;--sd:#5B21B6;
   --se-bg:#FFF1F2;--se:#9F1239;
+  /* Shared sizing — border radii and box shadows */
   --r:10px;--rs:6px;
   --sh:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);
   --sh-md:0 4px 20px rgba(0,0,0,.06),0 2px 6px rgba(0,0,0,.03);
@@ -28,7 +59,9 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g0);color:var(--g9);min-height:100vh;font-size:14px;line-height:1.6}
 
-/* ── Header ── */
+/* ── 2. Header Bar ──
+   Single-row sticky header: [Logos] | [Title + subtitle] ... [Nav links] | [Meta + Import]
+   Dark navy background with white-inverted logos. 54px tall. */
 .hdr{position:sticky;top:0;z-index:200;background:var(--navy);box-shadow:0 2px 12px rgba(0,0,0,.15)}
 .hdr-inner{display:flex;align-items:center;padding:0 32px;height:54px;gap:0}
 .hdr-logo{display:flex;align-items:center;gap:14px;margin-right:24px;flex-shrink:0}
@@ -40,10 +73,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .hdr-sub{font-size:9.5px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;font-weight:500;white-space:nowrap}
 .hdr-nav{display:flex;align-items:center;gap:2px;margin-left:auto}
 .hdr-meta{display:flex;align-items:center;gap:12px;margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.1)}
+/* Import button — ghost style that sits in the header meta area */
 .cfgbtn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:var(--rs);font-size:11px;font-weight:500;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);cursor:pointer;font-family:inherit;transition:all .15s}
 .cfgbtn:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.9);border-color:rgba(255,255,255,.2)}
 
-/* ── Main ── */
+/* ── 3. Main Layout ──
+   Centred content column (max 860px). Contains three possible screens:
+   - #loading  : spinner shown while CSV loads
+   - #errscr   : shown if CSV fetch fails (with manual upload fallback)
+   - #planner  : the main app (cards, timetable, summary) */
 .main{max-width:860px;margin:0 auto;padding:32px 24px 80px}
 #planner{display:none}
 #loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;color:var(--g4)}
@@ -53,7 +91,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 #errscr h2{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:700;color:var(--g7)}
 #errscr p{font-size:13.5px;color:var(--g5);max-width:400px;line-height:1.7}
 
-/* ── Plan Tabs ── */
+/* ── 4. Plan Tabs ──
+   Horizontal tab bar to switch between Plan A / B / C, plus a Compare button.
+   Active tab gets navy background; status icons (tick/warning) update dynamically. */
 .plan-tabs{display:flex;gap:6px;margin-bottom:22px;background:#fff;padding:6px;border-radius:var(--r);border:1px solid var(--g2);box-shadow:var(--sh)}
 .ptab{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px 14px;border-radius:7px;cursor:pointer;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--g5);transition:all .2s;font-family:inherit}
 .ptab:hover{background:var(--g0);color:var(--g7)}
@@ -65,7 +105,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .ptab-cmp:hover{border-color:var(--navy);background:var(--sa-bg)}
 .ptab-cmp.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 
-/* ── Cards ── */
+/* ── 5. Cards ──
+   White rounded containers used for each step (course selection, checks, summary).
+   Each card has a header (.card-h) with a numbered step badge and a body (.card-b). */
 .card{background:#fff;border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--g2);margin-bottom:16px;overflow:hidden;transition:box-shadow .2s}
 .card:hover{box-shadow:var(--sh-md)}
 .card-h{padding:16px 24px;border-bottom:1px solid var(--g1);display:flex;align-items:center;gap:12px}
@@ -75,7 +117,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .hint{font-size:12px;color:var(--g4);margin-left:auto;font-weight:400}
 .card-b{padding:24px}
 
-/* ── Form Fields ── */
+/* ── 6. Form Fields ──
+   Course/practical select dropdowns, slot badges (colour-coded A–E),
+   day chips (Mon AM, Tue PM, etc.), coordinator labels, and info panels
+   that expand below each dropdown when a course is selected. */
 .field{margin-bottom:18px} .field:last-child{margin-bottom:0}
 .flbl{display:block;font-size:10.5px;font-weight:600;color:var(--g5);margin-bottom:6px;letter-spacing:.08em;text-transform:uppercase}
 .sw{position:relative}
@@ -95,11 +140,15 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .divr{border:none;border-top:1px solid var(--g1);margin:18px 0}
 .labct{font-size:12px;color:var(--g4);margin-top:6px}
 
-/* ── Status Pills ── */
+/* ── 7. Status Pills ──
+   Small rounded badges (pending / ok / warning / error) shown in card headers
+   to indicate step completion status at a glance. */
 .spill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-left:auto;white-space:nowrap;letter-spacing:.02em}
 .sp-pend{background:var(--g1);color:var(--g4)} .sp-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)} .sp-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)} .sp-err{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd)}
 
-/* ── Alerts ── */
+/* ── 7b. Alerts ──
+   Coloured banner boxes used throughout for feedback messages.
+   Variants: a-ok (green), a-warn (amber), a-err (red), a-inf (blue). */
 .alrt{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;border-radius:var(--rs);margin-bottom:8px;line-height:1.5} .alrt:last-child{margin-bottom:0}
 .aico{font-size:14px;flex-shrink:0;margin-top:1px} .abdy{flex:1} .abdy strong{display:block;font-weight:600;font-size:13px;margin-bottom:2px} .abdy p{color:var(--g5);font-size:12.5px}
 .a-ok{background:var(--ok-bg);border:1px solid var(--ok-bd)} .a-ok .aico,.a-ok strong{color:var(--ok)}
@@ -107,7 +156,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .a-err{background:var(--err-bg);border:1px solid var(--err-bd)} .a-err .aico,.a-err strong{color:var(--err)}
 .a-inf{background:var(--inf-bg);border:1px solid var(--inf-bd)} .a-inf .aico,.a-inf strong{color:var(--inf)}
 
-/* ── Prerequisite Boxes ── */
+/* ── 8. Prerequisite Boxes ──
+   Checkbox-driven confirmations for prerequisite requirements.
+   Starts amber; turns green (.conf) when the student ticks the checkbox.
+   Includes inline guidance text with waiver links. */
 .pb{display:flex;gap:10px;align-items:flex-start;padding:12px 16px;background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:var(--rs);margin-bottom:8px;font-size:12.5px;line-height:1.5;transition:all .2s} .pb:last-child{margin-bottom:0} .pb.conf{background:var(--ok-bg);border-color:var(--ok-bd)}
 .pb input[type=checkbox]{width:15px;height:15px;margin-top:3px;flex-shrink:0;cursor:pointer;accent-color:var(--navy)}
 .pb label{cursor:pointer;color:var(--g5)} .pb label .pc{font-weight:600;color:var(--warn)} .pb.conf label .pc{color:var(--ok)}
@@ -116,7 +168,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .guidance strong{color:var(--g7);font-weight:600}
 .guidance a{color:var(--inf);font-weight:500;text-decoration:none} .guidance a:hover{text-decoration:underline}
 .seclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g4);margin-bottom:10px;margin-top:2px}
-/* ── Next Steps Card ── */
+/* ── 9. Next Steps Card ──
+   Numbered action list ("1. Save as PDF  2. Bring to advisor...") plus
+   deadline boxes and useful-links row. Shown once courses are selected. */
 .nsteps{list-style:none;padding:0;margin:0;counter-reset:ns}
 .nsteps li{position:relative;padding:6px 0 6px 32px;font-size:13px;color:var(--g7);counter-increment:ns}
 .nsteps li::before{content:counter(ns);position:absolute;left:0;top:6px;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
@@ -131,7 +185,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .links-row a:hover{background:var(--navy);color:#fff}
 .emptys{text-align:center;padding:28px 20px;color:var(--g4)} .emptys .ei{font-size:28px;display:block;margin-bottom:8px;opacity:.6} .emptys p{font-size:13px}
 
-/* ── Weekly Timetable ── */
+/* ── 10. Weekly Timetable ──
+   Fixed-layout table: columns = Mon–Fri, rows = AM/PM.
+   Cells are colour-coded by slot (courses) or blue (practicals).
+   Also used in compact form inside the comparison view. */
 .timetable{border-collapse:collapse;width:100%;font-size:12px;table-layout:fixed}
 .timetable th{background:var(--g0);padding:8px 6px;text-align:center;font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;border:1px solid var(--g2)}
 .timetable td{border:1px solid var(--g2);padding:4px;height:56px;vertical-align:top;background:#fff}
@@ -146,7 +203,10 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tt-code{font-weight:700;font-size:10px;letter-spacing:.02em}
 .tt-name{font-size:9px;opacity:.8;margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 
-/* ── Comparison View ── */
+/* ── 11. Comparison View ──
+   Side-by-side view of all three plans (A, B, C) in a 3-column grid.
+   Each column shows selected courses, practical, status, and a mini timetable.
+   Collapses to single column on screens ≤ 900px. */
 .cmp-view{display:none}
 .cmp-view.show{display:block}
 .cmp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
@@ -170,7 +230,9 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .cmp-tt .timetable .tt-code{font-size:8.5px}
 .cmp-tt .timetable .tt-name{display:none}
 
-/* ── Summary Table ── */
+/* ── 12. Summary Table ──
+   Final plan overview showing course code, title, slot, schedule days,
+   and coordinator in a clean table. Used in the "Your Plan" card and PDF output. */
 .stbl{width:100%;border-collapse:collapse;font-size:13px}
 .stbl th{background:var(--g0);padding:10px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid var(--g2)}
 .stbl td{padding:12px 14px;border-bottom:1px solid var(--g1);vertical-align:middle} .stbl tr:last-child td{border-bottom:none}
@@ -178,17 +240,22 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tchip{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--g4);background:var(--g1);padding:3px 8px;border-radius:4px}
 .scode{color:var(--g4);font-size:12px;font-family:'SF Mono',Monaco,Consolas,monospace} .sname{font-weight:500;color:var(--g9);line-height:1.3} .scoord{font-size:12px;color:var(--g4)}
 
-/* ── Action Bar ── */
+/* ── 13. Action Bar & Footer ──
+   Bottom bar of the summary card: "Save as PDF" (primary), "Reset plan" (ghost),
+   and a disclaimer note. Footer shows MSP branding at the page bottom. */
 .actbar{padding:16px 24px;background:var(--g0);border-top:1px solid var(--g1);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;border:none;transition:all .15s}
 .btn-or{background:var(--orange);color:#fff;box-shadow:0 1px 3px rgba(232,119,34,.3)} .btn-or:hover{opacity:.9;box-shadow:0 2px 8px rgba(232,119,34,.35)} .btn-or:disabled{opacity:.35;cursor:not-allowed;box-shadow:none}
 .btn-gh{background:#fff;color:var(--g5);border:1.5px solid var(--g2)} .btn-gh:hover{border-color:var(--g4);color:var(--g7)}
 .actnote{margin-left:auto;font-size:11.5px;color:var(--g4);line-height:1.5;text-align:right;max-width:260px}
 
-/* ── Footer ── */
 footer{text-align:center;padding:20px 24px;font-size:12px;color:var(--g4);border-top:1px solid var(--g2);background:#fff;display:flex;flex-direction:column;align-items:center}
 footer .ft-line{margin-bottom:0;font-size:11px}
 
+/* ── 17. Print Styles ──
+   When printing / saving as PDF: switch to white background, hide nav/meta,
+   hide interactive elements (tabs, action bar), and only show the summary card
+   with the timetable, checks summary, and important reminders. */
 .printonly{display:none}
 @media print{
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
@@ -218,9 +285,11 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 
+/* ── 18. Responsive (≤ 900px) — Stack comparison columns vertically ── */
 @media(max-width:900px){
   .cmp-grid{grid-template-columns:1fr;gap:10px}
 }
+/* ── 19. Responsive (≤ 640px) — Mobile: compact header, smaller cards ── */
 @media(max-width:640px){
   .hdr-inner{padding:0 16px;height:48px;flex-wrap:nowrap}
   .hdr-logo{gap:10px;margin-right:12px}
@@ -239,7 +308,10 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .plan-tabs{padding:4px}
 }
 
-/* ── Starred Panel ── */
+/* ── 14. Starred / Shortlist Panel ──
+   Shows courses bookmarked from the catalogue page (stored in localStorage).
+   Displayed as clickable chips above the plan cards. Each chip links back
+   to the catalogue and has a remove (×) button. */
 .starred-bar{background:#fff;border:1px solid var(--g2);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;box-shadow:var(--sh)}
 .starred-bar .sb-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .starred-bar .sb-hdr span{font-size:14px}
@@ -253,13 +325,17 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 .starred-chip .sc-rm:hover{opacity:1;background:rgba(0,0,0,.15)}
 .starred-chip:hover .sc-rm{opacity:.8}
 
-/* ── Icons ── */
+/* ── 15. Icons ──
+   Utility classes for inline SVG icons. Default 16×16, with lg (20px) and xl (28px) variants.
+   Icons use stroke styling (no fill) with currentColor for easy theming. */
 .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 .ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .ico-lg{width:20px;height:20px}
 .ico-xl{width:28px;height:28px}
 
-/* ── Nav Links ── */
+/* ── 16. Nav Links ──
+   Navigation items in the header bar. Active link gets white text + an orange
+   underline pseudo-element. Hover brightens inactive links. */
 .nav-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rs);font-size:12.5px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:all .15s;position:relative}
 .nav-link:hover{color:rgba(255,255,255,.9)}
 .nav-link.active{color:#fff;font-weight:600}
@@ -267,6 +343,11 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 </style>
 </head>
 <body>
+
+<!-- ============================================================
+     HEADER BAR
+     Unified dark nav bar: logos → divider → brand text → nav links → metadata + import
+     ============================================================ -->
 <header class="hdr">
   <div class="hdr-inner">
     <div class="hdr-logo">
@@ -291,7 +372,17 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     </div>
   </div>
 </header>
+
+<!-- Hidden file input — triggered by the "Import" button in the header -->
 <input type="file" id="csvf" accept=".csv" style="display:none">
+
+<!-- ============================================================
+     MAIN CONTENT
+     Three mutually-exclusive screens controlled by showScreen():
+       1. Loading spinner (#loading)
+       2. Error / manual upload prompt (#errscr)
+       3. Planner app (#planner) — the main interactive UI
+     ============================================================ -->
 <main class="main">
   <div id="loading"><div class="spin"></div><p style="font-size:13px">Loading schedule&hellip;</p></div>
   <div id="errscr">
@@ -301,15 +392,24 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     <button class="btn btn-or" onclick="document.getElementById('csvf').click()"><span class="ico"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>&nbsp; Load config file (.csv)</button>
     <p style="font-size:11.5px;color:var(--g4);margin-top:8px"><span class="ico" style="width:12px;height:12px"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span> Everything stays on your device.</p>
   </div>
+  <!-- ── Planner App ── -->
   <div id="planner">
+
+    <!-- Plan A/B/C tab switcher + Compare button -->
     <div class="plan-tabs">
       <button class="ptab active" id="tab-A" onclick="switchPlan('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
       <button class="ptab" id="tab-B" onclick="switchPlan('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
       <button class="ptab" id="tab-C" onclick="switchPlan('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
       <button class="ptab ptab-cmp" id="tab-cmp" onclick="toggleCmp()"><span class="ico" style="width:13px;height:13px"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></span> Compare</button>
     </div>
+
+    <!-- Starred / shortlist panel — shows bookmarked courses from catalogue (if any) -->
     <div id="starredPanel" style="display:none"></div>
+
+    <!-- ── Plan Editor View ── -->
     <div id="planview">
+
+    <!-- Step 1: Course Selection — two dropdowns (Course 1 + Course 2) from different slots -->
     <div class="card">
       <div class="card-h"><div class="step">1</div><h2>Select Your Courses</h2><span class="hint">2 courses from different time slots</span></div>
       <div class="card-b">
@@ -318,24 +418,34 @@ footer .ft-line{margin-bottom:0;font-size:11px}
         <div class="field"><label class="flbl">Course 2</label><div class="sw"><select id="c2"></select></div><div class="cpanel" id="pi2"></div></div>
       </div>
     </div>
+
+    <!-- Step 2: Practical Selection — filtered to only show non-overlapping practicals -->
     <div class="card">
       <div class="card-h"><div class="step">2</div><h2>Select Your Practical</h2><span class="hint">Must not overlap with course days</span></div>
       <div class="card-b">
         <div class="field"><label class="flbl">Practical / Skill</label><div class="sw"><select id="lab"></select></div><div id="labct" class="labct"></div><div class="cpanel" id="pil"></div></div>
       </div>
     </div>
+
+    <!-- Weekly Timetable — visual AM/PM × Mon–Fri grid of selected courses + practical -->
     <div class="card" id="ttcard">
       <div class="card-h"><div class="step"><span class="ico"><svg viewBox="0 0 24 24" style="stroke:#fff"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></div><h2>Weekly Timetable</h2><span class="hint">Your schedule at a glance</span></div>
       <div class="card-b" id="ttbd"><div class="emptys"><span class="ei"><span class="ico ico-lg" style="color:var(--g3)"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span></span><p>Select courses to see your weekly timetable.</p></div></div>
     </div>
+
+    <!-- Step 3: Checks — validates co-requisites and prerequisite confirmations -->
     <div class="card">
       <div class="card-h"><div class="step">3</div><h2>Checks &amp; Confirmations</h2><span class="spill sp-pend" id="chkst">&mdash; Select courses first</span></div>
       <div class="card-b" id="chkbd"><div class="emptys"><span class="ei"><span class="ico ico-lg" style="color:var(--g3)"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span></span><p>Select your courses above to see checks.</p></div></div>
     </div>
+
+    <!-- Step 4: Next Steps — action checklist + deadline boxes (shown once courses selected) -->
     <div class="card" id="nextsteps" style="display:none">
       <div class="card-h"><div class="step">4</div><h2>Next Steps</h2><span class="hint">What to do with your plan</span></div>
       <div class="card-b" id="nsbd"></div>
     </div>
+
+    <!-- Summary Card — final plan table, timetable, checks summary; this is what gets printed as PDF -->
     <div class="card" id="sumcard">
       <div class="card-h"><div class="step ok"><span class="ico"><svg viewBox="0 0 24 24" style="stroke:#fff"><polyline points="20 6 9 17 4 12"/></svg></span></div><h2>Your Plan</h2><span class="spill sp-pend" id="planst">Incomplete</span></div>
       <div class="printonly" style="padding:14px 24px 0;border-bottom:1px solid var(--g2)">
@@ -350,8 +460,14 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       </div>
     </div>
     </div>
+
+    <!-- Comparison View — side-by-side A/B/C plans (toggled by Compare button) -->
     <div id="cmpview" class="cmp-view"></div>
   </div>
+
+  <!-- ── Information Screen ──
+       Rules, waivers, deadlines — toggled via the "Info" nav link.
+       Content is built dynamically by buildInfoScreen(). -->
   <div id="infoscreen" style="display:none">
     <div class="card">
       <div class="card-h"><div class="step"><span class="ico"><svg viewBox="0 0 24 24" style="stroke:#fff"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span></div><h2>Rules, Waivers &amp; Deadlines</h2><span class="hint">EER &amp; R&amp;R references</span></div>
@@ -364,12 +480,37 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   <div class="ft-line">Maastricht Science Programme &nbsp;&middot;&nbsp; Faculty of Science and Engineering</div>
 </footer>
 <script>
+/* ============================================================
+   MSP Course Planner — Application Logic
+   ============================================================
+   Sections:
+     A. Configuration      — CSV filename, deadlines, external links
+     B. State              — Parsed course/lab arrays, three plan objects (A/B/C)
+     C. CSV Parsing & Load — Fetch or file-read CSV, parse rows, populate state
+     D. Plan Switching     — Switch between A/B/C plans, rebuild all UI
+     E. Dropdown Builders  — Populate Course 1, Course 2, and Practical selects
+     F. Info Panels        — Show slot/day/coordinator details below each dropdown
+     G. Weekly Timetable   — Build the AM/PM × Mon–Fri HTML table
+     H. Plan Status        — Determine ok/warn/err status for each plan
+     I. Checks             — Validate co-requisites and prerequisites
+     J. Summary            — Build the final plan table + print content
+     K. Comparison View    — Side-by-side A/B/C comparison
+     L. Next Steps         — Action list + deadline boxes
+     M. Starred Panel      — Shortlisted courses from catalogue (localStorage)
+     N. Information Screen — Rules, waivers, deadlines reference page
+     O. Event Listeners    — Dropdown change handlers, reset
+   ============================================================ */
+
+// ── A. Configuration ──
+// CSV to auto-load on page open (falls back to manual upload on failure)
 const AUTO='FrameSchedule_P5_v1.csv';
+// Key dates shown in the UI — update these each period
 const DEADLINES={
   switch:'Friday 6 March 2026, 17:00',
   withdrawal:'Friday 3 April 2026, 17:00',
   period:'5',year:'2025\u20132026'
 };
+// External URLs used in guidance text and link buttons
 const LINKS={
   switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch',
   waivers:'https://intranet.maastrichtuniversity.nl/en/msp-students/waivers',
@@ -377,10 +518,15 @@ const LINKS={
   additionalModule:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads/forms/additional-module',
   esd:'mailto:msp-educationsupport@maastrichtuniversity.nl'
 };
+
+// ── B. State ──
+// courses[] = modules with a Slot (A–E); labs[] = practicals (no slot)
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
+// Three independent plans — each stores selected course codes + prerequisite acknowledgements
 const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
-let act='A',cmpMode=false;
+let act='A',cmpMode=false; // act = active plan key; cmpMode = comparison view toggle
 function emptyPlan(){return{c1:'',c2:'',lab:'',ack:{}};}
+// Reusable SVG icon snippets (inserted via innerHTML)
 const ICO={
   calendar:'<span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>',
   star:'<span class="ico"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>',
@@ -391,15 +537,19 @@ const ICO={
   arrowLeft:'<span class="ico"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>',
 };
 
-// ── CSV / Config ──
+// ── C. CSV Parsing & Load ──
+// On page load, try to fetch the CSV automatically. If it fails (e.g. file not
+// found on server), show the error screen with a manual upload button.
 window.addEventListener('DOMContentLoaded',()=>{
   fetch(AUTO).then(r=>{if(!r.ok)throw 0;return r.text();}).then(load).catch(()=>showScreen('err'));
 });
+// Manual CSV upload via the hidden file input (triggered by Import button or error screen)
 document.getElementById('csvf').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>load(ev.target.result);r.readAsText(f);e.target.value='';
 });
 
+// Toggle between the three screens: loading spinner, error, or planner
 function showScreen(s){
   document.getElementById('loading').style.display=s==='ld'?'flex':'none';
   document.getElementById('errscr').style.display=s==='err'?'flex':'none';
@@ -407,12 +557,15 @@ function showScreen(s){
   document.getElementById('infoscreen').style.display='none';
 }
 
+// Simple CSV row parser that handles quoted fields (e.g. titles with commas)
 function parseRow(row){
   const res=[];let q=false,c='';
   for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='"'){q=!q;continue;}if(ch===','&&!q){res.push(c.trim());c='';continue;}c+=ch;}
   res.push(c.trim());return res;
 }
 
+// Parse the full CSV text: extract version/period metadata, then build course + lab arrays.
+// Each row becomes an object keyed by column headers (Slot, Code, Title, Days, etc.).
 function load(text){
   courses=[];labs=[];cfgV=cfgP=cfgY='';
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
@@ -444,7 +597,9 @@ function load(text){
   if(location.hash==='#info'){toggleInfo();history.replaceState(null,'',location.pathname);}
 }
 
-// ── Plan switching ──
+// ── D. Plan Switching ──
+// Activates the given plan (A/B/C), restores its saved selections into the dropdowns,
+// and rebuilds all dependent UI (info panels, checks, summary, timetable).
 function switchPlan(k){
   if(cmpMode)toggleCmp();
   act=k;
@@ -465,8 +620,12 @@ function switchPlan(k){
   checkPrereqs();buildSummary();buildNextSteps();buildTT();
 }
 
+// Persist current dropdown values into the active plan object
 function save(){const p=PLANS[act];p.c1=document.getElementById('c1').value;p.c2=document.getElementById('c2').value;p.lab=document.getElementById('lab').value;}
 
+// ── E. Dropdown Builders ──
+// Course 1: all courses grouped by slot. Course 2: same but excludes Course 1's slot.
+// Practicals: filtered to only those whose days don't overlap with selected courses.
 function buildCourse1(){const s=document.getElementById('c1');s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,null));}
 function buildCourse2(ex){const s=document.getElementById('c2'),pv=s.value;s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,ex));if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;}
 function groupBySlot(arr,ex){const g={};arr.forEach(c=>{if(c.Slot===ex&&ex)return;if(!g[c.Slot])g[c.Slot]=[];g[c.Slot].push(c);});return g;}
@@ -497,11 +656,14 @@ function buildLabs(used){
   document.getElementById('labct').textContent=used.size===0?`${labs.length} practicals available`:`${ok.length} of ${labs.length} practicals compatible with your courses`;
 }
 
+// ── F. Info Panels ──
+// Helper getters — look up the full course/lab object from the current dropdown value
 const getCourse1=()=>courses.find(c=>c.Code===document.getElementById('c1').value)||null;
 const getCourse2=()=>courses.find(c=>c.Code===document.getElementById('c2').value)||null;
 const getLab=()=>labs.find(l=>l.Code===document.getElementById('lab').value)||null;
 function formatDay(d){return d.replace('AM',' AM').replace('PM',' PM');}
 
+// Show/hide the expandable info panel below a dropdown (slot badge, day chips, coordinator)
 function showPanel(item,id,isLab){
   const el=document.getElementById(id);
   if(!item){el.classList.remove('show');return;}
@@ -511,7 +673,9 @@ function showPanel(item,id,isLab){
   el.classList.add('show');
 }
 
-// ── Weekly Timetable ──
+// ── G. Weekly Timetable ──
+// Renders a Mon–Fri × AM/PM grid. Each cell shows the course code + title,
+// colour-coded by slot. Used both in the main view and (in compact form) in comparison.
 const DAYS=['Mon','Tue','Wed','Thu','Fri'];
 const TIMES=['AM','PM'];
 
@@ -561,7 +725,9 @@ function buildTTHTML(c1,c2,lab,compact){
   return html;
 }
 
-// ── Plan status ──
+// ── H. Plan Status ──
+// Returns the overall status of a plan: 'empty', 'inc' (incomplete), 'ok', 'warn', or 'err'.
+// Used to set tab icons and comparison badges.
 function planStatus(k){
   const p=PLANS[k];
   const c1=courses.find(c=>c.Code===p.c1)||null,c2=courses.find(c=>c.Code===p.c2)||null;
@@ -587,7 +753,10 @@ function updateTabIcons(){
   });
 }
 
-// ── Checks ──
+// ── I. Checks ──
+// Validates co-requisite pairing (must take specific courses together) and
+// prerequisite acknowledgements (student must tick checkbox to confirm).
+// Updates the Step 3 card with alerts and the status pill.
 function checkPrereqs(){
   const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('chkst'),bEl=document.getElementById('chkbd');
@@ -615,11 +784,16 @@ function checkPrereqs(){
   updateTabIcons();
 }
 
+// Called when a prerequisite checkbox is toggled — saves state and re-validates
 function acknowledgeCheck(code,v){PLANS[act].ack[code]=v;checkPrereqs();buildSummary();}
 
+// Formats prerequisite code strings like "BIO2004+BIO2005/CHE1001" into readable HTML
 function formatPrereqs(s){return s.split('+').map(pt=>{const or=pt.trim().split('/').map(p=>`<strong>${p.trim()}</strong>`);return or.length>1?or.join(' <em>or</em> '):or[0];}).join(' <em>and</em> ');}
 
-// ── Summary ──
+// ── J. Summary ──
+// Builds the "Your Plan" card: a table of selected courses/practical with slot, days,
+// coordinator, prerequisite/co-requisite status. Also generates print-only content
+// (timetable, checks summary, reminders) that appears in the PDF output.
 function buildSummary(){
   const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('planst'),bEl=document.getElementById('sumbd'),btn=document.getElementById('btnp');
@@ -700,7 +874,9 @@ function buildSummary(){
   btn.disabled=!sel.length;
 }
 
-// ── Comparison View ──
+// ── K. Comparison View ──
+// Toggles between the plan editor and a side-by-side view of all three plans.
+// Each plan column shows courses, practical, status badge, and a mini timetable.
 function toggleCmp(){
   cmpMode=!cmpMode;
   const cmpBtn=document.getElementById('tab-cmp');
@@ -767,7 +943,9 @@ function buildCmp(){
   el.innerHTML=html;
 }
 
-// ── Next Steps ──
+// ── L. Next Steps ──
+// Shows a numbered action list ("Save as PDF → Bring to advisor → Register")
+// and deadline boxes. Highlights the switch deadline if it's within 7 days.
 function buildNextSteps(){
   const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const el=document.getElementById('nextsteps'),bd=document.getElementById('nsbd');
@@ -798,7 +976,10 @@ function buildNextSteps(){
   bd.innerHTML=html;
 }
 
-// ── Starred / Shortlist ──
+// ── M. Starred / Shortlist ──
+// Reads bookmarked course codes from localStorage (set in catalogue.html) and
+// renders them as clickable chips above the plan cards. Each chip links to
+// the course in the catalogue and has a remove button.
 function getStarred(){
   try{return JSON.parse(localStorage.getItem('msp-starred')||'[]');}catch{return[];}
 }
@@ -821,7 +1002,10 @@ function removeStar(code){
   buildStarredPanel();
 }
 
-// ── Information screen ──
+// ── N. Information Screen ──
+// Toggles between the planner and a reference page covering EER/R&R rules:
+// prerequisite waivers, co-requisite waivers, registration, switches,
+// withdrawals, exemptions, additional modules, external credits, and contacts.
 function toggleInfo(){
   const info=document.getElementById('infoscreen');
   const planner=document.getElementById('planner');
@@ -1014,7 +1198,10 @@ function buildInfoScreen(){
   `;
 }
 
-// ── Event listeners ──
+// ── O. Event Listeners ──
+// Each dropdown change saves the selection, updates the info panel, rebuilds
+// dependent dropdowns (Course 2 excludes Course 1's slot; Labs exclude used days),
+// then re-runs all checks, summary, next steps, and timetable.
 document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
 document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
 document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildNextSteps();buildTT();});
