@@ -190,7 +190,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
   body{background:#fff!important}
   .hdr{position:static!important;box-shadow:none!important}
-  .hdr-bar{display:none!important}
+  .hdr-bar,.nav-bar{display:none!important}
   .hdr-brand{border-bottom-color:var(--navy)!important}
   footer{display:none!important}
   .main{padding:12px!important;max-width:100%!important}
@@ -205,6 +205,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .sum-status-alert{display:none!important}
   .guidance{display:none!important}
   #nextsteps{display:none!important}
+  #infoscreen{display:none!important}
   .card-h .spill{display:none!important}
   .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
@@ -235,7 +236,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 <body>
 <header class="hdr">
   <div class="hdr-brand">
-    <img src="logo-header.png" alt="Maastricht University" class="logo-um">
+    <a href="index.html" style="display:flex;align-items:center"><img src="logo-header.png" alt="Maastricht University" class="logo-um"></a>
     <div class="hdr-center">
       <div class="hdr-title">MSP Course Planner</div>
       <div class="hdr-sub">Maastricht Science Programme &nbsp;&middot;&nbsp; Faculty of Science and Engineering</div>
@@ -245,6 +246,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   <nav class="nav-bar">
     <a class="nav-link active" href="index.html">&#128736; Course Planner</a>
     <a class="nav-link" href="catalogue.html">&#128218; Course Catalogue</a>
+    <a class="nav-link" href="#" onclick="event.preventDefault();toggleInfo()">&#9432; Information</a>
     <span class="nav-spacer"></span>
     <span id="mp" style="font-size:11px;color:rgba(255,255,255,.5)">Loading&hellip;</span>
     <span id="mv" style="display:none;font-size:11px;color:rgba(255,255,255,.5)"></span>
@@ -312,6 +314,12 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     </div>
     <div id="cmpview" class="cmp-view"></div>
   </div>
+  <div id="infoscreen" style="display:none">
+    <div class="card">
+      <div class="card-h"><div class="step">&#9432;</div><h2>How Course Selection Works</h2></div>
+      <div class="card-b" id="infobd" style="line-height:1.7"></div>
+    </div>
+  </div>
 </main>
 <footer>
   <img src="logo-main.png" alt="MSP" style="height:28px;width:auto;object-fit:contain;opacity:.5;margin-bottom:6px">
@@ -325,7 +333,8 @@ const DEADLINES={
   period:'5',year:'2025\u20132026'
 };
 const LINKS={
-  switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch'
+  switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch',
+  waivers:'https://intranet.maastrichtuniversity.nl/en/msp-students/waivers'
 };
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
 const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
@@ -345,6 +354,7 @@ function showScreen(s){
   document.getElementById('loading').style.display=s==='ld'?'flex':'none';
   document.getElementById('errscr').style.display=s==='err'?'flex':'none';
   document.getElementById('planner').style.display=s==='pl'?'block':'none';
+  document.getElementById('infoscreen').style.display='none';
 }
 
 function parseRow(row){
@@ -534,7 +544,7 @@ function checkPrereqs(){
   let html='',badCo=false,unPre=false,coI=[];
   for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rebuildLabs=labs.find(l=>l.Code===rc);const rn=rebuildLabs?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rebuildLabs?'practical':'course',ok:lab&&lab.Code===rc});}}
   if(lab&&lab.Corequisite&&lab.CorequisiteOf){const rc=lab.CorequisiteOf,rn=courses.find(c=>c.Code===rc)?.Title||rc,sat=sel.some(c=>c.Code===rc);if(!coI.some(i=>i.from.Code===rc&&i.rc===lab.Code))coI.push({from:lab,rc,rn,rt:'course',ok:sat});}
-  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p><div class="guidance"><strong>Add the co-requisite</strong> to your plan, or contact the module coordinator to request a waiver. If you have already passed the co-requisite in a previous period, it is automatically waived.</div></div></div>`;}});}
+  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p><div class="guidance"><strong>Add the co-requisite</strong> to your plan, or contact the module coordinator to <a href="${LINKS.waivers}" target="_blank">request a waiver</a>. If you have already passed the co-requisite in a previous period, it is automatically waived.</div></div></div>`;}});}
   const preI=[];
   for(const it of [...sel,lab].filter(Boolean)){if(it.Prerequisite&&it.PrerequisiteCodes){if(!(it.Code in p.ack))p.ack[it.Code]=false;preI.push(it);}}
   if(preI.length){
@@ -543,7 +553,7 @@ function checkPrereqs(){
     preI.forEach(it=>{
       const ok=p.ack[it.Code];
       if(!ok)unPre=true;
-      html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>${!ok?'<div class="guidance">Don\u2019t have the prerequisite? You can <strong>request a waiver</strong> from the course coordinator. Email them with a brief explanation of why you should be admitted. Submit the coordinator\u2019s approval email with your course selection form before the registration deadline. Waivers are an exception, not the norm.</div>':''}`;
+      html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>${!ok?'<div class="guidance">Don\u2019t have the prerequisite? You can <a href="'+LINKS.waivers+'" target="_blank"><strong>request a waiver</strong></a> from the course coordinator. Email them with a brief explanation of why you should be admitted. Submit the coordinator\u2019s approval email with your course selection form before the registration deadline. Waivers are an exception, not the norm.</div>':''}`;
     });
   }
   if(!coI.length&&!preI.length)html='<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>No prerequisites or co-requisites</strong><p>Your selection has no additional requirements.</p></div></div>';
@@ -735,6 +745,50 @@ function buildNextSteps(){
   html+=`<div class="links-row"><a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a></div>`;
 
   bd.innerHTML=html;
+}
+
+// ── Information screen ──
+function toggleInfo(){
+  const info=document.getElementById('infoscreen');
+  const planner=document.getElementById('planner');
+  const navLinks=document.querySelectorAll('.nav-link');
+  const showing=info.style.display!=='none';
+  if(showing){
+    info.style.display='none';planner.style.display='block';
+    navLinks.forEach(l=>{l.classList.toggle('active',l.textContent.includes('Planner'));});
+  }else{
+    info.style.display='block';planner.style.display='none';
+    navLinks.forEach(l=>{l.classList.toggle('active',l.textContent.includes('Information'));});
+    buildInfoScreen();
+  }
+}
+function buildInfoScreen(){
+  document.getElementById('infobd').innerHTML=`
+    <p style="font-size:13px;color:var(--g5);margin-bottom:16px">Use this tool to plan your courses for the upcoming period. Everything runs locally in your browser &mdash; nothing is uploaded or stored on a server.</p>
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Step-by-step</h3>
+    <ol style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:20px">
+      <li style="margin-bottom:6px"><strong>Pick two courses</strong> from different time slots (Slot A and Slot B).</li>
+      <li style="margin-bottom:6px"><strong>Pick a practical or skill</strong> that does not overlap with your course days.</li>
+      <li style="margin-bottom:6px"><strong>Review checks</strong> &mdash; the tool flags co-requisite and prerequisite issues automatically.</li>
+      <li style="margin-bottom:6px"><strong>Save as PDF</strong> and bring the plan to your advising session.</li>
+      <li><strong>Register</strong> via the official course registration form before the deadline.</li>
+    </ol>
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Prerequisites &amp; Co-requisites</h3>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">Some courses require you to have completed other courses first (prerequisites, marked with <strong>\u25b2</strong>) or to take another course at the same time (co-requisites, marked with <strong>\u25ca</strong>).</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:20px">If you do not meet a prerequisite, you can <a href="${LINKS.waivers}" target="_blank" style="color:var(--inf);font-weight:500">request a waiver</a> from the course coordinator. Email them explaining why you should be admitted, and submit their approval with your registration form.</p>
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Plan A / B / C</h3>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:20px">You can create up to three alternative plans. Use the <strong>Compare</strong> button to see them side by side. Only submit your final choice when registering.</p>
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Important Deadlines</h3>
+    <div class="dl-grid" style="margin-bottom:20px">
+      <div class="dl-box"><div class="dl-lbl">Switch deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.switch}</div></div>
+      <div class="dl-box"><div class="dl-lbl">Withdrawal deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.withdrawal}</div></div>
+    </div>
+    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Useful Links</h3>
+    <div class="links-row">
+      <a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a>
+      <a href="${LINKS.waivers}" target="_blank">\u{1F4CB} Waivers</a>
+    </div>
+  `;
 }
 
 // ── Event listeners ──
