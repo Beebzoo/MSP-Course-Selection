@@ -206,6 +206,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .guidance{display:none!important}
   #nextsteps{display:none!important}
   #infoscreen{display:none!important}
+  #starredPanel{display:none!important}
   .card-h .spill{display:none!important}
   .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
@@ -224,6 +225,17 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .actbar{padding:12px 16px}
   .plan-tabs{padding:4px}
 }
+
+/* ── Starred Panel ── */
+.starred-bar{background:#fff;border:1px solid var(--g2);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;box-shadow:var(--sh)}
+.starred-bar .sb-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.starred-bar .sb-hdr span{font-size:14px}
+.starred-bar .sb-title{font-size:12px;font-weight:700;color:var(--navy);letter-spacing:.02em}
+.starred-bar .sb-count{font-size:10px;color:var(--g4);background:var(--g1);padding:1px 7px;border-radius:10px;font-weight:600}
+.starred-list{display:flex;flex-wrap:wrap;gap:6px}
+.starred-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--rs);font-size:11.5px;background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);cursor:pointer;text-decoration:none;transition:all .15s;font-family:inherit;font-weight:500}
+.starred-chip:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
+.starred-chip .sc-code{font-weight:700;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:10.5px}
 
 /* ── Nav Bar ── */
 .nav-bar{display:flex;align-items:center;padding:0 40px;height:42px;background:var(--navy);gap:4px}
@@ -271,6 +283,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       <button class="ptab" id="tab-C" onclick="switchPlan('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
       <button class="ptab ptab-cmp" id="tab-cmp" onclick="toggleCmp()">&#9638; Compare</button>
     </div>
+    <div id="starredPanel" style="display:none"></div>
     <div id="planview">
     <div class="card">
       <div class="card-h"><div class="step">1</div><h2>Select Your Courses</h2><span class="hint">2 courses from different time slots</span></div>
@@ -393,7 +406,7 @@ function load(text){
   document.getElementById('mc').style.display='';
   document.getElementById('pp').textContent=cfgP&&cfgY?`Period ${cfgP}, ${cfgY}`:'';
   document.getElementById('pd').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  switchPlan('A');showScreen('pl');
+  switchPlan('A');showScreen('pl');buildStarredPanel();
 }
 
 // ── Plan switching ──
@@ -748,6 +761,23 @@ function buildNextSteps(){
   html+=`<div class="links-row"><a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a></div>`;
 
   bd.innerHTML=html;
+}
+
+// ── Starred / Shortlist ──
+function getStarred(){
+  try{return JSON.parse(localStorage.getItem('msp-starred')||'[]');}catch{return[];}
+}
+function buildStarredPanel(){
+  const starred=getStarred();
+  const el=document.getElementById('starredPanel');
+  if(!starred.length){el.style.display='none';return;}
+  el.style.display='block';
+  const all=[...courses,...labs];
+  const items=starred.map(code=>{
+    const c=all.find(x=>x.Code===code);
+    return c?{code:c.Code,title:c.Title,slot:c.Slot||null}:{code,title:code,slot:null};
+  });
+  el.innerHTML=`<div class="starred-bar"><div class="sb-hdr"><span>\u2605</span><span class="sb-title">Your Shortlist</span><span class="sb-count">${items.length}</span></div><div class="starred-list">${items.map(i=>`<a class="starred-chip" href="catalogue.html#card-${i.code}" title="${i.title}">${i.slot?'<span class="slotb sl-'+i.slot+'" style="font-size:9px;padding:1px 5px">'+i.slot+'</span>':''}<span class="sc-code">${i.code}</span>${i.title}</a>`).join('')}</div></div>`;
 }
 
 // ── Information screen ──
