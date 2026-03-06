@@ -122,7 +122,29 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .pb input[type=checkbox]{width:15px;height:15px;margin-top:3px;flex-shrink:0;cursor:pointer;accent-color:var(--navy)}
 .pb label{cursor:pointer;color:var(--g5)} .pb label .pc{font-weight:600;color:var(--warn)} .pb.conf label .pc{color:var(--ok)}
 .ph{font-size:11px;color:var(--warn);margin-top:3px;display:block;font-style:italic} .pb.conf .ph{display:none}
+.guidance{margin-top:6px;padding:9px 12px;background:rgba(12,74,110,.04);border-left:3px solid var(--inf-bd);border-radius:0 var(--rs) var(--rs) 0;font-size:11.5px;color:var(--g5);line-height:1.6}
+.guidance strong{color:var(--g7);font-weight:600}
+.guidance a{color:var(--inf);font-weight:500;text-decoration:none} .guidance a:hover{text-decoration:underline}
 .seclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g4);margin-bottom:10px;margin-top:2px}
+/* ── Next Steps Card ── */
+.nsteps{list-style:none;padding:0;margin:0;counter-reset:ns}
+.nsteps li{position:relative;padding:6px 0 6px 32px;font-size:13px;color:var(--g7);counter-increment:ns}
+.nsteps li::before{content:counter(ns);position:absolute;left:0;top:6px;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dl-box{padding:12px 14px;border-radius:var(--rs);border:1px solid var(--g2);background:var(--g0)}
+.dl-box .dl-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g4);margin-bottom:3px}
+.dl-box .dl-val{font-size:13px;font-weight:600;color:var(--g9)}
+.dl-box.dl-urgent{border-color:var(--warn-bd);background:var(--warn-bg)}
+.dl-box.dl-urgent .dl-lbl{color:var(--warn)} .dl-box.dl-urgent .dl-val{color:var(--warn)}
+.links-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.links-row a{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--rs);font-size:11.5px;font-weight:500;color:var(--navy);background:var(--sa-bg);border:1px solid rgba(29,78,216,.1);text-decoration:none;transition:all .15s}
+.links-row a:hover{background:var(--navy);color:#fff}
+/* ── Transcript Prompt ── */
+.tprompt{background:var(--g0);border:1.5px dashed var(--g3);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.tprompt .tp-icon{font-size:20px;flex-shrink:0;opacity:.5}
+.tprompt .tp-body{flex:1;min-width:200px}
+.tprompt .tp-body strong{font-size:12.5px;color:var(--g7);display:block;margin-bottom:2px}
+.tprompt .tp-body p{font-size:11.5px;color:var(--g4);line-height:1.5}
 .emptys{text-align:center;padding:28px 20px;color:var(--g4)} .emptys .ei{font-size:28px;display:block;margin-bottom:8px;opacity:.6} .emptys p{font-size:13px}
 
 /* ── Weekly Timetable ── */
@@ -202,6 +224,9 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .actbar{display:none!important}
   .printonly{display:block!important}
   .sum-status-alert{display:none!important}
+  .guidance{display:none!important}
+  .tprompt{display:none!important}
+  #nextsteps{display:none!important}
   .card-h .spill{display:none!important}
   .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
@@ -213,7 +238,8 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .hdr-brand{padding:0 16px;height:60px;gap:12px}
   .logo-um{height:32px} .logo-msp{height:36px}
   .hdr-title{font-size:18px}
-  .hdr-bar{padding:0 16px;font-size:11px}
+  .nav-bar{padding:0 16px}
+  .dl-grid{grid-template-columns:1fr}
   .main{padding:20px 12px 60px}
   .card-h{padding:14px 16px} .card-b{padding:16px}
   .actbar{padding:12px 16px}
@@ -260,6 +286,14 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     <p style="font-size:11.5px;color:var(--g4);margin-top:8px">&#128274; Everything stays on your device.</p>
   </div>
   <div id="planner">
+    <div id="tprompt" class="tprompt">
+      <span class="tp-icon">&#128203;</span>
+      <div class="tp-body">
+        <strong>Optional: Upload your transcript to auto-verify prerequisites</strong>
+        <p>Download from the <a href="https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads/forms/transcript-request" style="color:var(--inf)">Student Portal</a> (My Courses &rarr; Grade list), then upload the PDF here. Your data stays on your device.</p>
+      </div>
+      <button class="btn-sm btn-navy" onclick="document.getElementById('pdff').click()">&#128196; Upload transcript</button>
+    </div>
     <div id="tbanner" class="tbanner" style="display:none"></div>
     <div class="plan-tabs">
       <button class="ptab active" id="tab-A" onclick="switchPlan('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
@@ -290,6 +324,10 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       <div class="card-h"><div class="step">3</div><h2>Checks &amp; Confirmations</h2><span class="spill sp-pend" id="chkst">&mdash; Select courses first</span></div>
       <div class="card-b" id="chkbd"><div class="emptys"><span class="ei">&#10003;</span><p>Select your courses above to see checks.</p></div></div>
     </div>
+    <div class="card" id="nextsteps" style="display:none">
+      <div class="card-h"><div class="step">4</div><h2>Next Steps</h2><span class="hint">What to do with your plan</span></div>
+      <div class="card-b" id="nsbd"></div>
+    </div>
     <div class="card" id="sumcard">
       <div class="card-h"><div class="step ok">&#10003;</div><h2>Your Plan</h2><span class="spill sp-pend" id="planst">Incomplete</span></div>
       <div class="printonly" style="padding:14px 24px 0;border-bottom:1px solid var(--g2)">
@@ -313,6 +351,15 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 </footer>
 <script>
 const AUTO='FrameSchedule_P5_v1.csv';
+const DEADLINES={
+  switch:'Friday 6 March 2026, 17:00',
+  withdrawal:'Friday 3 April 2026, 17:00',
+  period:'5',year:'2025\u20132026'
+};
+const LINKS={
+  switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch',
+  transcript:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads/forms/transcript-request'
+};
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
 const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
 let act='A',cmpMode=false;
@@ -416,8 +463,9 @@ function checkPrereqMet(prereqStr){
 
 function updateTranscriptUI(){
   const el=document.getElementById('tbanner');
-  if(!transcript){el.style.display='none';return;}
-  el.style.display='flex';
+  const tp=document.getElementById('tprompt');
+  if(!transcript){el.style.display='none';if(tp)tp.style.display='flex';return;}
+  el.style.display='flex';if(tp)tp.style.display='none';
   const n=transcript.completed.size;
   el.innerHTML=`
     <span class="ti-icon">&#127891;</span>
@@ -510,7 +558,7 @@ function switchPlan(k){
   document.getElementById('lab').value=p.lab;
   showPanel(cv1,'pi1',false);showPanel(cv2,'pi2',false);
   showPanel(labs.find(l=>l.Code===p.lab)||null,'pil',true);
-  checkPrereqs();buildSummary();buildTT();
+  checkPrereqs();buildSummary();buildNextSteps();buildTT();
 }
 
 function save(){const p=PLANS[act];p.c1=document.getElementById('c1').value;p.c2=document.getElementById('c2').value;p.lab=document.getElementById('lab').value;}
@@ -662,7 +710,7 @@ function checkPrereqs(){
   let html='',badCo=false,unPre=false,coI=[];
   for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rebuildLabs=labs.find(l=>l.Code===rc);const rn=rebuildLabs?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rebuildLabs?'practical':'course',ok:lab&&lab.Code===rc});}}
   if(lab&&lab.Corequisite&&lab.CorequisiteOf){const rc=lab.CorequisiteOf,rn=courses.find(c=>c.Code===rc)?.Title||rc,sat=sel.some(c=>c.Code===rc);if(!coI.some(i=>i.from.Code===rc&&i.rc===lab.Code))coI.push({from:lab,rc,rn,rt:'course',ok:sat});}
-  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p></div></div>`;}});}
+  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p><div class="guidance"><strong>Add the co-requisite</strong> to your plan, or contact the module coordinator to request a waiver. If you have already passed the co-requisite in a previous period, it is automatically waived \u2014 <a href="#" onclick="event.preventDefault();document.getElementById('pdff').click()">upload your transcript</a> to verify.</div></div></div>`;}});}
   const preI=[];
   for(const it of [...sel,lab].filter(Boolean)){if(it.Prerequisite&&it.PrerequisiteCodes){if(!(it.Code in p.ack))p.ack[it.Code]=transcript?checkPrereqMet(it.PrerequisiteCodes):false;preI.push(it);}}
   if(preI.length){
@@ -677,9 +725,9 @@ function checkPrereqs(){
         // Auto-verified by transcript
         html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
       }else if(transcript&&!met){
-        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
+        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p><div class="guidance">You may still be able to take this course by <strong>requesting a waiver</strong>. Contact the course coordinator by email with a short explanation. If granted, submit the approval email with your course selection form before the registration deadline.</div></div></div>`;
       }else{
-        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
+        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>${!ok?'<div class="guidance">Don\u2019t have the prerequisite? You can <strong>request a waiver</strong> from the course coordinator. Email them with a brief explanation of why you should be admitted. Submit the coordinator\u2019s approval email with your course selection form before the registration deadline. Waivers are an exception, not the norm.</div>':''}`;
       }
     });
   }
@@ -772,7 +820,10 @@ function buildSummary(){
     stuHtml=`<div style="margin-top:14px;padding:10px 14px;background:var(--g0);border-radius:var(--rs);border:1px solid var(--g2);font-size:12px"><strong style="color:var(--navy)">Student:</strong> ${transcript.name||''}${transcript.pnumber?' \u00b7 '+transcript.pnumber:''}</div>`;
   }
 
-  bEl.innerHTML=`${stuHtml}<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${sb}`;
+  // Print-only reminders
+  let printReminders=`<div class="printonly" style="margin-top:16px;padding:14px;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rs)"><p class="seclbl" style="margin-bottom:6px">Important Reminders</p><ul style="margin:0 0 0 16px;font-size:11.5px;color:var(--g5);line-height:1.7"><li>This plan is for self-preparation only. <strong>Confirm all registrations with your academic advisor.</strong></li><li>If you need prerequisite waivers, contact the course coordinator <strong>before the registration deadline</strong>.</li><li>Period ${DEADLINES.period} switch deadline: <strong>${DEADLINES.switch}</strong></li><li>Period ${DEADLINES.period} withdrawal deadline: <strong>${DEADLINES.withdrawal}</strong></li></ul></div>`;
+
+  bEl.innerHTML=`${stuHtml}<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${printReminders}${sb}`;
   if(done){sEl.className='spill sp-ok';sEl.textContent='\u2713 Ready to print';}
   else if(iss.length){sEl.className='spill sp-warn';sEl.textContent='\u26a0 Issues to resolve';}
   else{sEl.className='spill sp-pend';sEl.textContent='Incomplete';}
@@ -846,10 +897,41 @@ function buildCmp(){
   el.innerHTML=html;
 }
 
+// ── Next Steps ──
+function buildNextSteps(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
+  const el=document.getElementById('nextsteps'),bd=document.getElementById('nsbd');
+  const p=PLANS[act];
+  const done=sel.length===2&&lab&&planStatus(act)==='ok';
+  if(!sel.length){el.style.display='none';return;}
+  el.style.display='';
+
+  // Check if switch deadline is near or past
+  const switchDate=new Date('2026-03-06T17:00:00');
+  const now=new Date();
+  const switchUrgent=now>new Date(switchDate.getTime()-7*24*60*60*1000);
+
+  let html='';
+  if(done){
+    html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Your plan looks good!</strong><p>Here\u2019s what to do next:</p></div></div>`;
+    html+=`<ol class="nsteps" style="margin-top:12px"><li><strong>Save this plan as PDF</strong> using the button below</li><li><strong>Bring it to your academic advising session</strong></li><li><strong>Register</strong> for your chosen modules via the course registration form before the deadline</li><li><strong>Check the switch/withdrawal deadlines</strong> if you need to make changes later</li></ol>`;
+  }else{
+    html+=`<div class="alrt a-inf"><span class="aico">\u2139</span><div class="abdy"><strong>Almost there</strong><p>Resolve the outstanding issues above, then follow these steps to finalise your registration.</p></div></div>`;
+  }
+
+  // Deadline boxes
+  html+=`<div class="dl-grid"><div class="dl-box${switchUrgent?' dl-urgent':''}"><div class="dl-lbl">Switch deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.switch}</div></div><div class="dl-box"><div class="dl-lbl">Withdrawal deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.withdrawal}</div></div></div>`;
+
+  // Useful links
+  html+=`<div class="links-row"><a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a><a href="${LINKS.transcript}" target="_blank">\u{1F4C4} Transcript request</a></div>`;
+
+  bd.innerHTML=html;
+}
+
 // ── Event listeners ──
-document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildTT();});
-document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildTT();});
-document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildTT();});
+document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
+document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
+document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildNextSteps();buildTT();});
 function rebuildLabs(){const c1=getCourse1(),c2=getCourse2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);buildLabs(u);showPanel(getLab(),'pil',true);}
 function resetPlan(){PLANS[act]=emptyPlan();switchPlan(act);updateTabIcons();}
 </script>
