@@ -316,7 +316,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   </div>
   <div id="infoscreen" style="display:none">
     <div class="card">
-      <div class="card-h"><div class="step">&#9432;</div><h2>How Course Selection Works</h2></div>
+      <div class="card-h"><div class="step">&#9432;</div><h2>Rules, Waivers &amp; Deadlines</h2><span class="hint">EER &amp; R&amp;R references</span></div>
       <div class="card-b" id="infobd" style="line-height:1.7"></div>
     </div>
   </div>
@@ -334,7 +334,10 @@ const DEADLINES={
 };
 const LINKS={
   switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch',
-  waivers:'https://intranet.maastrichtuniversity.nl/en/msp-students/waivers'
+  waivers:'https://intranet.maastrichtuniversity.nl/en/msp-students/waivers',
+  transcript:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads/forms/transcript-request',
+  additionalModule:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads/forms/additional-module',
+  esd:'mailto:msp-educationsupport@maastrichtuniversity.nl'
 };
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
 const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
@@ -764,29 +767,178 @@ function toggleInfo(){
 }
 function buildInfoScreen(){
   document.getElementById('infobd').innerHTML=`
-    <p style="font-size:13px;color:var(--g5);margin-bottom:16px">Use this tool to plan your courses for the upcoming period. Everything runs locally in your browser &mdash; nothing is uploaded or stored on a server.</p>
-    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Step-by-step</h3>
-    <ol style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:20px">
-      <li style="margin-bottom:6px"><strong>Pick two courses</strong> from different time slots (Slot A and Slot B).</li>
-      <li style="margin-bottom:6px"><strong>Pick a practical or skill</strong> that does not overlap with your course days.</li>
-      <li style="margin-bottom:6px"><strong>Review checks</strong> &mdash; the tool flags co-requisite and prerequisite issues automatically.</li>
-      <li style="margin-bottom:6px"><strong>Save as PDF</strong> and bring the plan to your advising session.</li>
-      <li><strong>Register</strong> via the official course registration form before the deadline.</li>
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Prerequisite Waivers</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: EER Article 4.3</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">A student can only start a module if they meet the prerequisites. All 3000-level modules must have prerequisites; 2000-level modules may have them; 1000-level modules do not.</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">Prerequisites can be waived with <strong>written consent from the course coordinator</strong> of the module that requires the prerequisite (EER Art. 4.3.3).</p>
+    <ol style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:10px">
+      <li style="margin-bottom:4px">Email the course coordinator with a short explanation of why you should receive a waiver</li>
+      <li style="margin-bottom:4px">The coordinator evaluates whether you can cope with the course content</li>
+      <li style="margin-bottom:4px">The coordinator grants the waiver by replying to your email</li>
+      <li style="margin-bottom:4px">Hand in this approval email with your course selection form</li>
+      <li>You will <strong>not</strong> be registered without the waiver, or with a waiver handed in after the deadline</li>
     </ol>
-    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Prerequisites &amp; Co-requisites</h3>
-    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">Some courses require you to have completed other courses first (prerequisites, marked with <strong>\u25b2</strong>) or to take another course at the same time (co-requisites, marked with <strong>\u25ca</strong>).</p>
-    <p style="font-size:13px;color:var(--g7);margin-bottom:20px">If you do not meet a prerequisite, you can <a href="${LINKS.waivers}" target="_blank" style="color:var(--inf);font-weight:500">request a waiver</a> from the course coordinator. Email them explaining why you should be admitted, and submit their approval with your registration form.</p>
-    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Plan A / B / C</h3>
-    <p style="font-size:13px;color:var(--g7);margin-bottom:20px">You can create up to three alternative plans. Use the <strong>Compare</strong> button to see them side by side. Only submit your final choice when registering.</p>
-    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Important Deadlines</h3>
-    <div class="dl-grid" style="margin-bottom:20px">
-      <div class="dl-box"><div class="dl-lbl">Switch deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.switch}</div></div>
-      <div class="dl-box"><div class="dl-lbl">Withdrawal deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.withdrawal}</div></div>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px"><strong>When:</strong> Waivers can be requested twice a year &mdash; November and May &mdash; during course registration. Both student and coordinator need to handle requests with urgency due to strict deadlines.</p>
+    <p style="font-size:13px;color:var(--warn);margin-bottom:12px"><strong>Important:</strong> Waivers should only be requested as an exception. Prerequisites and co-requisites are important elements of the open curriculum.</p>
+
+    <details style="margin-bottom:16px;border:1px solid var(--g2);border-radius:var(--rs);overflow:hidden">
+      <summary style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;background:var(--g0)">Course-specific waiver notes</summary>
+      <div style="padding:12px 14px;font-size:12.5px;color:var(--g7);line-height:1.7">
+        <p><strong>BIO3004 Animal Behaviour</strong> (prereq: BIO2004 + BIO2005) &mdash; Students without BIO2004 General Zoology but with sufficient biology background may be able to take this course with a waiver. Contact the coordinator.</p>
+        <p style="margin-top:6px"><strong>CHE3009 Crystallography</strong> (prereq: PRO1002) &mdash; Not recommended for first-year students. If you haven\u2019t taken at least two semesters at MSP, waivers are unlikely.</p>
+        <p style="margin-top:6px"><strong>PRA2007 Physics Laboratory</strong> (prereq: PRA1003) &mdash; Waivers are unlikely unless you can show equivalent experimental physics experience.</p>
+        <p style="margin-top:6px"><strong>MAT2004 Linear Algebra</strong> &mdash; Requires substantial high-school mathematics experience. Contact the coordinator if unsure.</p>
+      </div>
+    </details>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Co-requisite Waivers</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: EER Article 4.3.5\u20134.3.8</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">Co-requisites require the student to take two or more modules in the same period. A co-requisite can be waived with <strong>written consent from the module coordinator</strong> (EER Art. 4.3.7).</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:12px"><strong>Automatic waiver:</strong> A co-requisite is automatically waived if you have already passed the co-requisite module in a previous period (EER Art. 4.3.8).</p>
+
+    <details style="margin-bottom:16px;border:1px solid var(--g2);border-radius:var(--rs);overflow:hidden">
+      <summary style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;background:var(--g0)">P5 2025\u20132026 co-requisite pairs</summary>
+      <div style="padding:12px 14px;font-size:12.5px;color:var(--g7);line-height:1.7">
+        <p><strong>CHE2010</strong> General Chemistry \u2194 <strong>PRA2034</strong> General Chemistry Laboratory</p>
+        <p style="margin-top:4px"><strong>BIO3001</strong> Molecular Biology \u2194 <strong>PRA3003</strong> Molecular Biology Skills</p>
+        <p style="margin-top:4px"><strong>BIO3003</strong> Medical Microbiology \u2194 <strong>PRA3010</strong> Microbiology Skills</p>
+      </div>
+    </details>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Registration</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: EER Article 4.4, R&amp;R Article 7</p>
+    <ul style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:12px;line-height:1.7">
+      <li>You can only participate in a module after registering by the deadline via the registration form submitted to OSA</li>
+      <li>If you miss the deadline, registration cannot be guaranteed</li>
+      <li>Upon registration you are automatically registered for the first exam and resit</li>
+      <li>You are responsible for checking your own registration</li>
+    </ul>
+    <div class="dl-grid" style="margin-bottom:16px">
+      <div class="dl-box"><div class="dl-lbl">Spring semester (P4 &amp; P4\u2013P5)</div><div class="dl-val">14 November 2025</div></div>
+      <div class="dl-box"><div class="dl-lbl">Fall semester</div><div class="dl-val">18 May 2026</div></div>
     </div>
-    <h3 style="font-size:14px;color:var(--navy);margin-bottom:8px">Useful Links</h3>
-    <div class="links-row">
-      <a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Switches (Late Enrolments)</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: R&amp;R Article 8</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">A switch is a withdrawal from one module combined with late enrolment in an alternative module for the same period.</p>
+    <ol style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:10px">
+      <li style="margin-bottom:4px">Complete the online <a href="${LINKS.switchForm}" target="_blank" style="color:var(--inf);font-weight:500">withdraw/switch form</a></li>
+      <li style="margin-bottom:4px">The switch must be supported by your academic advisor</li>
+      <li style="margin-bottom:4px">Must be approved by Dr. Chris Pawley (coordinator of Academic Advising)</li>
+      <li>Inform your Academic Adviser (AA), the Office of Academic Advising (OAA), and the Office of Student Affairs (OSA)</li>
+    </ol>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:12px"><strong>Restrictions:</strong> No switching to external modules. Alternatives may be limited by capacity.</p>
+
+    <details style="margin-bottom:16px;border:1px solid var(--g2);border-radius:var(--rs);overflow:hidden">
+      <summary style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;background:var(--g0)">Switch deadlines 2025\u20132026 (all at 17:00)</summary>
+      <div style="padding:12px 14px;font-size:12.5px;color:var(--g7);line-height:1.7">
+        <p>Period 1: <strong>Friday 8 August 2025</strong></p>
+        <p>Period 2: <strong>Friday 3 October 2025</strong></p>
+        <p>Period 4: <strong>Friday 9 January 2026</strong></p>
+        <p>Period 5: <strong>Friday 6 March 2026</strong></p>
+      </div>
+    </details>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Withdrawals</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: R&amp;R Article 8</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">Withdrawing from a module without switching to another. Same process as switches &mdash; complete the <a href="${LINKS.switchForm}" target="_blank" style="color:var(--inf);font-weight:500">online form</a> and inform AA, OAA, and OSA.</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:12px"><strong>Key fact:</strong> If you withdraw before the deadline, the module does not appear on your transcript.</p>
+
+    <details style="margin-bottom:16px;border:1px solid var(--g2);border-radius:var(--rs);overflow:hidden">
+      <summary style="padding:10px 14px;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer;background:var(--g0)">Withdrawal deadlines 2025\u20132026 (all at 17:00)</summary>
+      <div style="padding:12px 14px;font-size:12.5px;color:var(--g7);line-height:1.7">
+        <p>Period 1: <strong>Friday 5 September 2025</strong></p>
+        <p>Period 2: <strong>Friday 31 October 2025</strong></p>
+        <p>Period 4: <strong>Friday 30 January 2026</strong></p>
+        <p>Period 5: <strong>Friday 3 April 2026</strong></p>
+      </div>
+    </details>
+    <p style="font-size:12px;color:var(--g4);margin-bottom:4px">Note: Withdrawal deadlines are always later than switch deadlines for the same period.</p>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Exemptions</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: R&amp;R Article 12, EER Article 5.13</p>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:8px">An exemption means you don\u2019t have to take a mandatory module at all. This is different from a prerequisite waiver.</p>
+    <ul style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:12px;line-height:1.7">
+      <li>Only possible for mandatory modules of the Programme</li>
+      <li>Submit a motivated request to the <strong>Board of Examiners</strong> no later than <strong>three weeks before the module starts</strong></li>
+      <li>Must include sufficient written documentation</li>
+      <li>Granted if you passed a similar exam elsewhere or have equivalent professional experience</li>
+      <li>May only pertain to an entire module, not a component</li>
+      <li>BTR/Capstone is excluded from exemption</li>
+    </ul>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Additional Modules (Overload)</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: R&amp;R Article 10</p>
+    <ul style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:12px;line-height:1.7">
+      <li>Requires a motivated request to the <strong>Board of Examiners</strong> before the registration deadline via the <a href="${LINKS.additionalModule}" target="_blank" style="color:var(--inf);font-weight:500">online form</a></li>
+      <li>Only allowed if GPA and progress rate show sufficient capacity, max 10 ECTS per semester</li>
+      <li><strong>Not allowed</strong> in the first year or first two semesters</li>
+      <li>Only one additional module alongside BTR</li>
+      <li>Without prior BoE approval, no ECTS will be granted</li>
+      <li>Cannot be external modules</li>
+    </ul>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">External Credits</h3>
+    <p style="font-size:13px;color:var(--g5);margin-bottom:4px;font-style:italic">Legal basis: R&amp;R Articles 11A and 11B</p>
+    <ul style="font-size:13px;color:var(--g7);padding-left:20px;margin-bottom:12px;line-height:1.7">
+      <li>Motivated request to BoE via the applicable online form</li>
+      <li><strong>Not allowed</strong> in the first year or first two semesters</li>
+      <li>Cannot be followed as additional workload</li>
+      <li>Preferred at advanced level</li>
+      <li>External credits count towards GPA and progress rate (except transferred credits)</li>
+      <li>Maximum 30 external credits, or 35 if the Education Minor is followed in full</li>
+      <li>Credit transfer requests must be submitted before the end of the first year</li>
+    </ul>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Transcripts</h3>
+    <p style="font-size:13px;color:var(--g7);margin-bottom:12px">Official transcripts are issued by the Education Support Department. A certified transcript is downloadable from the Student Portal: <strong>My Courses \u2192 Grade list</strong>.</p>
+
+    <hr style="border:none;border-top:1px solid var(--g2);margin:20px 0">
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Period ${DEADLINES.period} Deadlines</h3>
+    <div class="dl-grid" style="margin-bottom:16px">
+      <div class="dl-box"><div class="dl-lbl">Switch deadline</div><div class="dl-val">${DEADLINES.switch}</div></div>
+      <div class="dl-box"><div class="dl-lbl">Withdrawal deadline</div><div class="dl-val">${DEADLINES.withdrawal}</div></div>
+    </div>
+
+    <h3 style="font-size:15px;color:var(--navy);margin-bottom:10px">Key Contacts &amp; Forms</h3>
+    <div style="overflow-x:auto">
+      <table class="stbl" style="font-size:12.5px">
+        <thead><tr><th>What</th><th>Who / Where</th></tr></thead>
+        <tbody>
+          <tr><td>Prerequisite waiver</td><td>Email the course coordinator directly</td></tr>
+          <tr><td>Co-requisite waiver</td><td>Email the module coordinator directly</td></tr>
+          <tr><td>Exemption</td><td>Motivated request to Board of Examiners (3 weeks before module start)</td></tr>
+          <tr><td>Switch / Withdrawal</td><td>Online form, approved by Dr. Chris Pawley</td></tr>
+          <tr><td>Additional module</td><td>Online form to BoE before registration deadline</td></tr>
+          <tr><td>External credits</td><td>Online form to BoE before registration deadline</td></tr>
+          <tr><td>ESD contact</td><td><a href="${LINKS.esd}" style="color:var(--inf);font-weight:500">msp-educationsupport@maastrichtuniversity.nl</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="links-row" style="margin-top:16px">
       <a href="${LINKS.waivers}" target="_blank">\u{1F4CB} Waivers</a>
+      <a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a>
+      <a href="${LINKS.transcript}" target="_blank">\u{1F4C4} Transcript request</a>
+      <a href="${LINKS.additionalModule}" target="_blank">\u{1F4E6} Additional module form</a>
     </div>
   `;
 }
