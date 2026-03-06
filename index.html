@@ -236,6 +236,9 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 .starred-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:var(--rs);font-size:11.5px;background:var(--warn-bg);border:1px solid var(--warn-bd);color:var(--warn);cursor:pointer;text-decoration:none;transition:all .15s;font-family:inherit;font-weight:500}
 .starred-chip:hover{background:var(--orange);color:#fff;border-color:var(--orange)}
 .starred-chip .sc-code{font-weight:700;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:10.5px}
+.starred-chip .sc-rm{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;margin-left:2px;opacity:.5;transition:all .15s;flex-shrink:0}
+.starred-chip .sc-rm:hover{opacity:1;background:rgba(0,0,0,.15)}
+.starred-chip:hover .sc-rm{opacity:.8}
 
 /* ── Icons ── */
 .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;vertical-align:middle}
@@ -793,7 +796,13 @@ function buildStarredPanel(){
     const c=all.find(x=>x.Code===code);
     return c?{code:c.Code,title:c.Title,slot:c.Slot||null}:{code,title:code,slot:null};
   });
-  el.innerHTML=`<div class="starred-bar"><div class="sb-hdr">${ICO.star}<span class="sb-title">Your Shortlist</span><span class="sb-count">${items.length}</span></div><div class="starred-list">${items.map(i=>`<a class="starred-chip" href="catalogue.html#card-${i.code}" title="${i.title}">${i.slot?'<span class="slotb sl-'+i.slot+'" style="font-size:9px;padding:1px 5px">'+i.slot+'</span>':''}<span class="sc-code">${i.code}</span>${i.title}</a>`).join('')}</div></div>`;
+  el.innerHTML=`<div class="starred-bar"><div class="sb-hdr">${ICO.star}<span class="sb-title">Your Shortlist</span><span class="sb-count">${items.length}</span></div><div class="starred-list">${items.map(i=>`<a class="starred-chip" href="catalogue.html#card-${i.code}" title="${i.title}">${i.slot?'<span class="slotb sl-'+i.slot+'" style="font-size:9px;padding:1px 5px">'+i.slot+'</span>':''}<span class="sc-code">${i.code}</span>${i.title}<span class="sc-rm" onclick="event.preventDefault();event.stopPropagation();removeStar('${i.code}')" title="Remove from shortlist"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span></a>`).join('')}</div></div>`;
+}
+function removeStar(code){
+  let starred=getStarred();
+  starred=starred.filter(c=>c!==code);
+  localStorage.setItem('msp-starred',JSON.stringify(starred));
+  buildStarredPanel();
 }
 
 // ── Information screen ──
