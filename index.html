@@ -19,7 +19,7 @@
   --g0:#F8FAFC;--g1:#F1F5F9;--g2:#E2E8F0;--g3:#CBD5E1;
   --g4:#94A3B8;--g5:#64748B;--g7:#334155;--g9:#0F172A;
   --sa-bg:#EFF6FF;--sa:#1D4ED8;--sb-bg:#F0FDF4;--sb:#166534;
-  --sc-bg:#FEFCE8;--sc:#854D0E;--sd-bg:#F5F3FF;--sd:#5B21B6;
+  --sc-bg:#FEFCE8;--showScreen:#854D0E;--sd-bg:#F5F3FF;--sd:#5B21B6;
   --se-bg:#FFF1F2;--se:#9F1239;
   --r:10px;--rs:6px;
   --sh:0 1px 3px rgba(0,0,0,.04),0 1px 2px rgba(0,0,0,.03);
@@ -35,7 +35,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .logo-um{height:42px;width:auto;object-fit:contain}
 .logo-msp{height:48px;width:auto;object-fit:contain}
 .hdr-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.hdr-title{font-family:'DM Sans','Inter',-apple-system,sans-serif;font-size:23px;font-weight:700;color:var(--navy);letter-spacing:-.02em;line-height:1.1}
+.hdr-title{font-family:'TheSans','DM Sans','Inter',-apple-system,sans-serif;font-size:23px;font-weight:700;color:var(--navy);letter-spacing:-.02em;line-height:1.1}
 .hdr-sub{font-size:10.5px;color:var(--g4);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500}
 .hdr-bar{display:flex;align-items:center;padding:0 40px;height:38px;background:var(--navy);font-size:12px;color:rgba(255,255,255,.6)}
 .bsep{width:1px;height:14px;background:rgba(255,255,255,.15);margin:0 14px}
@@ -99,7 +99,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .cpanel{display:none;margin-top:8px;padding:10px 14px;background:var(--g0);border:1px solid var(--g1);border-radius:var(--rs);font-size:12.5px} .cpanel.show{display:block}
 .crow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:3px} .crow:last-child{margin-bottom:0}
 .slotb{display:inline-flex;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.05em}
-.sl-A{background:var(--sa-bg);color:var(--sa)} .sl-B{background:var(--sb-bg);color:var(--sb)} .sl-C{background:var(--sc-bg);color:var(--sc)} .sl-D{background:var(--sd-bg);color:var(--sd)} .sl-E{background:var(--se-bg);color:var(--se)}
+.sl-A{background:var(--sa-bg);color:var(--sa)} .sl-B{background:var(--sb-bg);color:var(--sb)} .sl-C{background:var(--sc-bg);color:var(--showScreen)} .sl-D{background:var(--sd-bg);color:var(--sd)} .sl-E{background:var(--se-bg);color:var(--se)}
 .tg{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
 .tg-co{background:var(--inf-bg);color:var(--inf)} .tg-pre{background:var(--warn-bg);color:var(--warn)}
 .tg-elig{background:var(--ok-bg);color:var(--ok)} .tg-inelig{background:var(--err-bg);color:var(--err)}
@@ -137,7 +137,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .tt-cell{border-radius:4px;padding:5px 6px;font-size:10.5px;line-height:1.3;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-weight:500}
 .tt-course{background:var(--sa-bg);color:var(--sa);border:1px solid rgba(29,78,216,.15)}
 .tt-course.sl-B{background:var(--sb-bg);color:var(--sb);border-color:rgba(22,101,52,.15)}
-.tt-course.sl-C{background:var(--sc-bg);color:var(--sc);border-color:rgba(133,77,14,.15)}
+.tt-course.sl-C{background:var(--sc-bg);color:var(--showScreen);border-color:rgba(133,77,14,.15)}
 .tt-course.sl-D{background:var(--sd-bg);color:var(--sd);border-color:rgba(91,33,182,.15)}
 .tt-course.sl-E{background:var(--se-bg);color:var(--se);border-color:rgba(159,18,57,.15)}
 .tt-lab{background:var(--inf-bg);color:var(--inf);border:1px solid rgba(12,74,110,.15)}
@@ -223,6 +223,43 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .actbar{padding:12px 16px}
   .plan-tabs{padding:4px}
 }
+
+/* ── Course Catalogue Modal ── */
+.cat-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.45);backdrop-filter:blur(2px);display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+.cat-overlay.show{display:flex}
+.cat-modal{background:#fff;border-radius:var(--r);box-shadow:var(--sh-lg);width:100%;max-width:900px;max-height:calc(100vh - 80px);display:flex;flex-direction:column;overflow:hidden}
+.cat-hdr{display:flex;align-items:center;padding:20px 24px;border-bottom:1px solid var(--g2);gap:12px;flex-shrink:0}
+.cat-hdr h2{font-family:'TheSans','DM Sans',sans-serif;font-size:20px;font-weight:700;color:var(--navy)}
+.cat-hdr .cat-count{font-size:12px;color:var(--g4);margin-left:4px}
+.cat-close{margin-left:auto;width:32px;height:32px;border-radius:50%;border:none;background:var(--g1);color:var(--g5);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.cat-close:hover{background:var(--g2);color:var(--g7)}
+.cat-search{padding:12px 24px;border-bottom:1px solid var(--g1);flex-shrink:0}
+.cat-search input{width:100%;padding:9px 14px;border:1.5px solid var(--g2);border-radius:var(--rs);font-size:13px;font-family:inherit;color:var(--g9);background:var(--g0);transition:border-color .15s}
+.cat-search input:focus{outline:none;border-color:var(--navy);background:#fff}
+.cat-body{overflow-y:auto;padding:16px 24px 24px;flex:1}
+.cat-group{margin-bottom:20px}
+.cat-group:last-child{margin-bottom:0}
+.cat-group-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g4);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--g1)}
+.cat-card{padding:14px 16px;border:1px solid var(--g2);border-radius:var(--rs);margin-bottom:8px;cursor:pointer;transition:all .15s;background:#fff}
+.cat-card:hover{border-color:var(--g3);box-shadow:var(--sh)}
+.cat-card:last-child{margin-bottom:0}
+.cat-card-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cat-card .cc-code{font-size:13px;font-weight:700;color:var(--navy);font-family:'SF Mono',Monaco,Consolas,monospace;letter-spacing:.02em}
+.cat-card .cc-title{font-size:14px;font-weight:600;color:var(--g9)}
+.cat-card .cc-coord{font-size:11.5px;color:var(--g4);margin-top:3px}
+.cat-card .cc-tags{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.cat-detail{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--g1);font-size:13px;color:var(--g7);line-height:1.7}
+.cat-card.expanded .cat-detail{display:block}
+.cat-detail h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin:14px 0 4px}
+.cat-detail h4:first-child{margin-top:0}
+.cat-detail p{margin-bottom:6px}
+.cat-detail ul{margin:0 0 6px 18px;padding:0}
+.cat-detail li{margin-bottom:3px;font-size:12.5px}
+.cat-empty{text-align:center;padding:40px 20px;color:var(--g4);font-size:13px}
+@media(max-width:640px){
+  .cat-overlay{padding:0}
+  .cat-modal{max-height:100vh;border-radius:0;height:100vh}
+}
 </style>
 </head>
 <body>
@@ -241,9 +278,18 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     <span id="mv" style="display:none"></span>
     <span class="bsep" id="sep2" style="display:none"></span>
     <span id="mc" style="display:none"></span>
+    <button class="cfgbtn" onclick="openCatalogue()">&#128218; Course Catalogue</button>
     <button class="cfgbtn" onclick="document.getElementById('csvf').click()">&#128194; Load config</button>
   </div>
 </header>
+<!-- Course Catalogue Modal -->
+<div class="cat-overlay" id="catOverlay" onclick="if(event.target===this)closeCatalogue()">
+  <div class="cat-modal">
+    <div class="cat-hdr"><h2>Course Catalogue</h2><span class="cat-count" id="catCount"></span><button class="cat-close" onclick="closeCatalogue()">&times;</button></div>
+    <div class="cat-search"><input type="text" id="catSearch" placeholder="Search courses by code, title, or keyword..." oninput="filterCatalogue()"></div>
+    <div class="cat-body" id="catBody"></div>
+  </div>
+</div>
 <input type="file" id="csvf" accept=".csv" style="display:none">
 <input type="file" id="pdff" accept=".pdf" style="display:none">
 <main class="main">
@@ -258,9 +304,9 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   <div id="planner">
     <div id="tbanner" class="tbanner" style="display:none"></div>
     <div class="plan-tabs">
-      <button class="ptab active" id="tab-A" onclick="sw('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
-      <button class="ptab" id="tab-B" onclick="sw('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
-      <button class="ptab" id="tab-C" onclick="sw('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
+      <button class="ptab active" id="tab-A" onclick="switchPlan('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
+      <button class="ptab" id="tab-B" onclick="switchPlan('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
+      <button class="ptab" id="tab-C" onclick="switchPlan('C')"><span class="tlbl">Plan C</span><span class="tst" id="ts-C"></span></button>
       <button class="ptab ptab-cmp" id="tab-cmp" onclick="toggleCmp()">&#9638; Compare</button>
     </div>
     <div id="planview">
@@ -295,7 +341,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       <div id="sumbd" style="padding:24px"><div class="emptys"><span class="ei">&#128203;</span><p>Your plan will appear here once you select courses.</p></div></div>
       <div class="actbar">
         <button class="btn btn-or" id="btnp" onclick="window.print()" disabled>&#128424;&nbsp; Save as PDF</button>
-        <button class="btn btn-gh" onclick="rp()">&#8635;&nbsp; Reset plan</button>
+        <button class="btn btn-gh" onclick="resetPlan()">&#8635;&nbsp; Reset plan</button>
         <span class="actnote">For self-preparation only.<br>Always confirm with your academic advisor.</span>
       </div>
     </div>
@@ -310,10 +356,10 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 <script>
 const AUTO='FrameSchedule_P5_v1.csv';
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
-const PLANS={A:ep(),B:ep(),C:ep()};
+const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
 let act='A',cmpMode=false;
 let transcript=null; // {name, pnumber, completed: Set of course codes}
-function ep(){return{c1:'',c2:'',lab:'',ack:{}};}
+function emptyPlan(){return{c1:'',c2:'',lab:'',ack:{}};}
 
 // ── PDF Transcript Parsing ──
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -378,7 +424,7 @@ function parseTranscript(text){
   });
 
   // Refresh current view
-  if(courses.length)sw(act);
+  if(courses.length)switchPlan(act);
 }
 
 function autoCheckPrereqs(planKey){
@@ -432,25 +478,25 @@ function clearTranscript(){
   updateTranscriptUI();
   // Reset all acks
   Object.keys(PLANS).forEach(k=>{PLANS[k].ack={};});
-  sw(act);
+  switchPlan(act);
 }
 
 // ── CSV / Config ──
 window.addEventListener('DOMContentLoaded',()=>{
-  fetch(AUTO).then(r=>{if(!r.ok)throw 0;return r.text();}).then(load).catch(()=>sc('err'));
+  fetch(AUTO).then(r=>{if(!r.ok)throw 0;return r.text();}).then(load).catch(()=>showScreen('err'));
 });
 document.getElementById('csvf').addEventListener('change',e=>{
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();r.onload=ev=>load(ev.target.result);r.readAsText(f);e.target.value='';
 });
 
-function sc(s){
+function showScreen(s){
   document.getElementById('loading').style.display=s==='ld'?'flex':'none';
   document.getElementById('errscr').style.display=s==='err'?'flex':'none';
   document.getElementById('planner').style.display=s==='pl'?'block':'none';
 }
 
-function pr(row){
+function parseRow(row){
   const res=[];let q=false,c='';
   for(let i=0;i<row.length;i++){const ch=row[i];if(ch==='"'){q=!q;continue;}if(ch===','&&!q){res.push(c.trim());c='';continue;}c+=ch;}
   res.push(c.trim());return res;
@@ -461,14 +507,14 @@ function load(text){
   const lines=text.split(/\r?\n/).filter(l=>l.trim());
   let hi=-1;
   for(let i=0;i<lines.length;i++){
-    const c=pr(lines[i]);
-    if(c[0]==='Version'&&i+1<lines.length){const m=pr(lines[i+1]);cfgV=m[0]||'';cfgP=m[1]||'';cfgY=m[2]||'';}
+    const c=parseRow(lines[i]);
+    if(c[0]==='Version'&&i+1<lines.length){const m=parseRow(lines[i+1]);cfgV=m[0]||'';cfgP=m[1]||'';cfgY=m[2]||'';}
     if(c[0]==='Slot'){hi=i;break;}
   }
-  if(hi<0){sc('err');return;}
-  const hdrs=pr(lines[hi]);
+  if(hi<0){showScreen('err');return;}
+  const hdrs=parseRow(lines[hi]);
   for(let i=hi+1;i<lines.length;i++){
-    const row=pr(lines[i]);if(row.length<3||!row[1])continue;
+    const row=parseRow(lines[i]);if(row.length<3||!row[1])continue;
     const e={};hdrs.forEach((h,idx)=>e[h]=(row[idx]||'').trim());
     e.Corequisite=e.Corequisite?.toUpperCase()==='TRUE';
     e.Prerequisite=e.Prerequisite?.toUpperCase()==='TRUE';
@@ -485,37 +531,37 @@ function load(text){
   document.getElementById('pd').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   // Auto-check prereqs if transcript already loaded
   if(transcript)Object.keys(PLANS).forEach(k=>autoCheckPrereqs(k));
-  sw('A');sc('pl');
+  switchPlan('A');showScreen('pl');
 }
 
 // ── Plan switching ──
-function sw(k){
+function switchPlan(k){
   if(cmpMode)toggleCmp();
   act=k;
   document.querySelectorAll('.ptab:not(.ptab-cmp)').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+k).classList.add('active');
   const p=PLANS[k];
-  bc1();
+  buildCourse1();
   const cv1=courses.find(c=>c.Code===p.c1)||null;
   document.getElementById('c1').value=p.c1;
-  bc2(cv1?.Slot||null);
+  buildCourse2(cv1?.Slot||null);
   document.getElementById('c2').value=p.c2;
   const cv2=courses.find(c=>c.Code===p.c2)||null;
   const used=new Set([...(cv1?.Days||[]),...(cv2?.Days||[])]);
-  bl(used);
+  buildLabs(used);
   document.getElementById('lab').value=p.lab;
-  pan(cv1,'pi1',false);pan(cv2,'pi2',false);
-  pan(labs.find(l=>l.Code===p.lab)||null,'pil',true);
-  chk();sum();buildTT();
+  showPanel(cv1,'pi1',false);showPanel(cv2,'pi2',false);
+  showPanel(labs.find(l=>l.Code===p.lab)||null,'pil',true);
+  checkPrereqs();buildSummary();buildTT();
 }
 
 function save(){const p=PLANS[act];p.c1=document.getElementById('c1').value;p.c2=document.getElementById('c2').value;p.lab=document.getElementById('lab').value;}
 
-function bc1(){const s=document.getElementById('c1');s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';ag(s,grp(courses,null));}
-function bc2(ex){const s=document.getElementById('c2'),pv=s.value;s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';ag(s,grp(courses,ex));if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;}
-function grp(arr,ex){const g={};arr.forEach(c=>{if(c.Slot===ex&&ex)return;if(!g[c.Slot])g[c.Slot]=[];g[c.Slot].push(c);});return g;}
+function buildCourse1(){const s=document.getElementById('c1');s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,null));}
+function buildCourse2(ex){const s=document.getElementById('c2'),pv=s.value;s.innerHTML='<option value="">\u2014 Select a course \u2014</option>';addGroupedOptions(s,groupBySlot(courses,ex));if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;}
+function groupBySlot(arr,ex){const g={};arr.forEach(c=>{if(c.Slot===ex&&ex)return;if(!g[c.Slot])g[c.Slot]=[];g[c.Slot].push(c);});return g;}
 
-function ag(s,g){
+function addGroupedOptions(s,g){
   Object.keys(g).sort().forEach(sl=>{
     const og=document.createElement('optgroup');
     og.label=sl?`Slot ${sl}`:'Other';
@@ -535,7 +581,7 @@ function ag(s,g){
   });
 }
 
-function bl(used){
+function buildLabs(used){
   const s=document.getElementById('lab'),pv=s.value;
   s.innerHTML='<option value="">\u2014 Select a practical \u2014</option>';
   const ok=labs.filter(l=>!l.Days.some(d=>used.has(d)));
@@ -555,15 +601,15 @@ function bl(used){
   document.getElementById('labct').textContent=used.size===0?`${labs.length} practicals available`:`${ok.length} of ${labs.length} practicals compatible with your courses`;
 }
 
-const gc1=()=>courses.find(c=>c.Code===document.getElementById('c1').value)||null;
-const gc2=()=>courses.find(c=>c.Code===document.getElementById('c2').value)||null;
-const gl=()=>labs.find(l=>l.Code===document.getElementById('lab').value)||null;
-function fd(d){return d.replace('AM',' AM').replace('PM',' PM');}
+const getCourse1=()=>courses.find(c=>c.Code===document.getElementById('c1').value)||null;
+const getCourse2=()=>courses.find(c=>c.Code===document.getElementById('c2').value)||null;
+const getLab=()=>labs.find(l=>l.Code===document.getElementById('lab').value)||null;
+function formatDay(d){return d.replace('AM',' AM').replace('PM',' PM');}
 
-function pan(item,id,isLab){
+function showPanel(item,id,isLab){
   const el=document.getElementById(id);
   if(!item){el.classList.remove('show');return;}
-  const chips=item.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+  const chips=item.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
   const tags=[item.Corequisite?'<span class="tg tg-co">\u25ca Co-req</span>':'',item.Prerequisite?'<span class="tg tg-pre">\u25b2 Pre-req</span>':''].filter(Boolean).join('');
   let eligTag='';
   if(transcript&&item.Prerequisite&&item.PrerequisiteCodes){
@@ -579,7 +625,7 @@ const DAYS=['Mon','Tue','Wed','Thu','Fri'];
 const TIMES=['AM','PM'];
 
 function buildTT(){
-  const c1=gc1(),c2=gc2(),lab=gl();
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab();
   const sel=[c1,c2].filter(Boolean);
   const bd=document.getElementById('ttbd');
 
@@ -625,7 +671,7 @@ function buildTTHTML(c1,c2,lab,compact){
 }
 
 // ── Plan status ──
-function pst(k){
+function planStatus(k){
   const p=PLANS[k];
   const c1=courses.find(c=>c.Code===p.c1)||null,c2=courses.find(c=>c.Code===p.c2)||null;
   const lab=labs.find(l=>l.Code===p.lab)||null,sel=[c1,c2].filter(Boolean);
@@ -638,11 +684,11 @@ function pst(k){
   if(iss.includes('co'))return'err';if(iss.includes('pre'))return'warn';return'inc';
 }
 
-function ti(){
+function updateTabIcons(){
   ['A','B','C'].forEach(k=>{
     const t=document.getElementById('tab-'+k),ts=document.getElementById('ts-'+k);
     t.classList.remove('tok','twarn','terr');
-    const s=pst(k);
+    const s=planStatus(k);
     if(s==='ok'){ts.textContent=' \u2713';t.classList.add('tok');}
     else if(s==='warn'){ts.textContent=' \u26a0';t.classList.add('twarn');}
     else if(s==='err'){ts.textContent=' \u26a0';t.classList.add('terr');}
@@ -651,12 +697,12 @@ function ti(){
 }
 
 // ── Checks ──
-function chk(){
-  const c1=gc1(),c2=gc2(),lab=gl(),sel=[c1,c2].filter(Boolean);
+function checkPrereqs(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('chkst'),bEl=document.getElementById('chkbd');
   if(!sel.length){sEl.className='spill sp-pend';sEl.textContent='\u2014 Select courses first';bEl.innerHTML='<div class="emptys"><span class="ei">\u2713</span><p>Select your courses to see checks.</p></div>';return;}
   let html='',badCo=false,unPre=false,coI=[];
-  for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rl=labs.find(l=>l.Code===rc);const rn=rl?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rl?'practical':'course',ok:lab&&lab.Code===rc});}}
+  for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rebuildLabs=labs.find(l=>l.Code===rc);const rn=rebuildLabs?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rebuildLabs?'practical':'course',ok:lab&&lab.Code===rc});}}
   if(lab&&lab.Corequisite&&lab.CorequisiteOf){const rc=lab.CorequisiteOf,rn=courses.find(c=>c.Code===rc)?.Title||rc,sat=sel.some(c=>c.Code===rc);if(!coI.some(i=>i.from.Code===rc&&i.rc===lab.Code))coI.push({from:lab,rc,rn,rt:'course',ok:sat});}
   if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p></div></div>`;}});}
   const preI=[];
@@ -671,11 +717,11 @@ function chk(){
 
       if(transcript&&met){
         // Auto-verified by transcript
-        html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${fp(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
+        html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
       }else if(transcript&&!met){
-        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${fp(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
+        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
       }else{
-        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="ac('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${fp(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
+        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
       }
     });
   }
@@ -684,16 +730,16 @@ function chk(){
   if(badCo){sEl.className='spill sp-err';sEl.textContent='\u26a0 Missing co-requisite';}
   else if(unPre){sEl.className='spill sp-warn';sEl.textContent='! Confirm prerequisites';}
   else{sEl.className='spill sp-ok';sEl.textContent='\u2713 All checks passed';}
-  ti();
+  updateTabIcons();
 }
 
-function ac(code,v){PLANS[act].ack[code]=v;chk();sum();}
+function acknowledgeCheck(code,v){PLANS[act].ack[code]=v;checkPrereqs();buildSummary();}
 
-function fp(s){return s.split('+').map(pt=>{const or=pt.trim().split('/').map(p=>`<strong>${p.trim()}</strong>`);return or.length>1?or.join(' <em>or</em> '):or[0];}).join(' <em>and</em> ');}
+function formatPrereqs(s){return s.split('+').map(pt=>{const or=pt.trim().split('/').map(p=>`<strong>${p.trim()}</strong>`);return or.length>1?or.join(' <em>or</em> '):or[0];}).join(' <em>and</em> ');}
 
 // ── Summary ──
-function sum(){
-  const c1=gc1(),c2=gc2(),lab=gl(),sel=[c1,c2].filter(Boolean);
+function buildSummary(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
   const p=PLANS[act],sEl=document.getElementById('planst'),bEl=document.getElementById('sumbd'),btn=document.getElementById('btnp');
   if(!sel.length){sEl.className='spill sp-pend';sEl.textContent='Incomplete';bEl.innerHTML='<div class="emptys"><span class="ei">\ud83d\udccb</span><p>Select courses to see your plan.</p></div>';btn.disabled=true;return;}
   const iss=[];
@@ -705,7 +751,7 @@ function sum(){
   // Course detail rows with prerequisites
   let rows='';
   sel.forEach(c=>{
-    const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    const chips=c.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(c.Prerequisite&&c.PrerequisiteCodes){
       const met=transcript?checkPrereqMet(c.PrerequisiteCodes):p.ack[c.Code];
@@ -719,7 +765,7 @@ function sum(){
     rows+=`<tr><td><span class="tchip">Course</span></td><td><div class="scode">${c.Code}</div><div class="sname">${c.Title}</div>${prereqInfo}${coreqInfo}</td><td><span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></td><td><div class="days">${chips}</div></td><td class="scoord">${c.Coordinator}</td></tr>`;
   });
   if(lab){
-    const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join(' ');
+    const chips=lab.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(lab.Prerequisite&&lab.PrerequisiteCodes){
       const met=transcript?checkPrereqMet(lab.PrerequisiteCodes):p.ack[lab.Code];
@@ -805,7 +851,7 @@ function buildCmp(){
     const c2=courses.find(c=>c.Code===p.c2)||null;
     const lab=labs.find(l=>l.Code===p.lab)||null;
     const sel=[c1,c2].filter(Boolean);
-    const st=pst(k);
+    const st=planStatus(k);
 
     let stCls='',stTxt='';
     if(st==='ok'){stCls='cmp-st-ok';stTxt='\u2713 Ready';}
@@ -822,11 +868,11 @@ function buildCmp(){
       html+='<div class="cmp-empty">No courses selected</div>';
     }else{
       sel.forEach(c=>{
-        const chips=c.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+        const chips=c.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
         html+=`<div class="cmp-item"><div class="ci-type">Course &middot; <span class="slotb sl-${c.Slot}">SLOT ${c.Slot}</span></div><div class="ci-code">${c.Code}</div><div class="ci-title">${c.Title}</div><div class="ci-days">${chips}</div></div>`;
       });
       if(lab){
-        const chips=lab.Days.map(d=>`<span class="daychip">${fd(d)}</span>`).join('');
+        const chips=lab.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
         html+=`<div class="cmp-item"><div class="ci-type">Practical</div><div class="ci-code">${lab.Code}</div><div class="ci-title">${lab.Title}</div><div class="ci-days">${chips}</div></div>`;
       }else{
         html+='<div class="cmp-item" style="opacity:.5"><div class="ci-type">Practical</div><div class="ci-title" style="font-style:italic">Not selected</div></div>';
@@ -843,11 +889,142 @@ function buildCmp(){
 }
 
 // ── Event listeners ──
-document.getElementById('c1').addEventListener('change',()=>{save();const c1=gc1();pan(c1,'pi1',false);bc2(c1?.Slot||null);if(!gc2())document.getElementById('pi2').classList.remove('show');rl();chk();sum();buildTT();});
-document.getElementById('c2').addEventListener('change',()=>{save();pan(gc2(),'pi2',false);rl();chk();sum();buildTT();});
-document.getElementById('lab').addEventListener('change',()=>{save();pan(gl(),'pil',true);chk();sum();buildTT();});
-function rl(){const c1=gc1(),c2=gc2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);bl(u);pan(gl(),'pil',true);}
-function rp(){PLANS[act]=ep();sw(act);ti();}
+document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildTT();});
+document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildTT();});
+document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildTT();});
+function rebuildLabs(){const c1=getCourse1(),c2=getCourse2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);buildLabs(u);showPanel(getLab(),'pil',true);}
+function resetPlan(){PLANS[act]=emptyPlan();switchPlan(act);updateTabIcons();}
+
+// ── Course Catalogue ──
+const DESCRIPTIONS={
+"CHE2010":{title:"General Chemistry",coordinator:"Dr. Chris Bahn, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"chris.bahn@maastrichtuniversity.nl",prereqs:["CHE1101 - Introduction to Chemistry"],coreqs:["PRA2034 - General Chemistry Lab"],objectives:["To extend knowledge of bonding theories within larger molecules","To obtain an understanding of the various mathematical relationships present in ideal and real gases","To use the concepts of intermolecular forces to predict physical properties of substances","To gain a deeper and broader understanding of solution equilibria"],description:"The emphasis of this course will be to extend a number of essential topics from the Introduction to Chemistry course. The first part of the course will focus on bonding in molecules, molecular symmetry, character tables, and their applications. The second part will examine intermolecular forces and what factors impact phases transitions certain physical properties. In the final part, the course focuses on solution equilibria and properties.",literature:"Chemistry, via OpenStax (https://openstax.org/details/books/chemistry-atoms-first-2e)\nISBN-10: 1-947172-63-8\nISBN-13: 978-1-947172-63-0.",format:"Lectures, PandA sessions, and tutorial group meetings",assessment:["A midterm examination consisting of multiple choice, short answer, calculation and explanation questions","Weekly tutorials \u2013 attendance and contributions","A final examination consisting of multiple choice, short answer, calculation and explanation questions"],slot:"A"},
+"BIO3001":{title:"Molecular Biology",coordinator:"Dr. Kathia Jimenez, Maastricht Science Programme, Maastricht University.",contact:"k.jimenezmonroy@maastrichtuniversity.nl",prereqs:["BIO2001 Cell Biology","BIO2007 Genetics"],coreqs:["PRA3003 Molecular Biology"],objectives:["Analyze gene structure/function and different gene regulatory mechanisms (chromatin remodeling and (post)transcriptional regulation) in prokaryotes and eukaryotes","Summarize the best-characterized cell signaling mechanisms in eukaryotic cells","Summarize how epigenetic changes and gene silencing take place","Summarize how gene manipulation can be achieved for different applications","Summarize the type of stem cells that can be produced and their application","Learn how to apply concepts and tools from molecular biology into current research articles related to diagnostics and therapeutics in the cellular complexity of eukaryotes and prokaryotes"],description:"The general aim of this course is to obtain detailed knowledge about the molecular processes in cell signaling and control of gene expression. Topics include intracellular signaling pathways; chromatin structure and remodeling; recruitment and assembly of transcription factors; eukaryote mRNA synthesis, processing, modification, stability and translation; stem cells and reprogramming; and the application of the above factors in current research.",literature:"Recommended literature sources are:\n\u2022 \"Molecular Cell Biology\" by Lodish, Berk, Kaiser (W.H. Freeman, 8th edition, 2016)\n\u2022 \"Introduction to Genetic Analysis\" by Griffiths, Wessler, Carrol, Doebley (W.H. Freeman, 10th edition, International Edition, 2012)\n\u2022 \"Molecular biology of the Cell\" by Alberts et al.",format:"12 tutorial sessions, all onsite. PBL sessions followed by Q&A sessions.",assessment:["Final exam","Presentation grade","Tutorial participation"],slot:"A"},
+"PHY2002":{title:"Thermodynamics and Statistical Mechanics",coordinator:"Dr. Veaceslav (Slava) Vieru, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"v.vieru@maastrichtuniversity.nl",prereqs:["MAT2006"],coreqs:[],objectives:["To provide a molecular and mathematical understanding of basic concepts in thermodynamics","To explain and describe the behaviour of systems when temperature and pressure is changed","To apply the general principles of thermodynamics to describe and understand physical, chemical and environmental processes","To derive via statistical thermodynamics important thermodynamic quantities (e.g. internal energy, enthalpy, entropy, Gibbs and Helmholtz energies, pressure)"],description:"This course aims to introduce the students to the core of thermodynamics. First, it introduces classical thermodynamics and applies it to macroscopic systems. Subsequently, statistical thermodynamics is introduced and linked to the main thermodynamic quantities. Students will learn how to apply thermodynamics to analyze the physical and chemical properties of gases, solutions and solids, with a focus on mathematical derivations of formulas.",literature:"\u2022 McQuarrie, Donald A.; Simon, John D. Physical Chemistry: A Molecular Approach (any edition). University Science Books.\n\u2022 Atkins, Peter. Physical Chemistry (any edition)\n\u2022 Andrew Maczek; Anthony Meijer. Statistical Thermodynamics. Oxford.",format:"Lectures and tutorials.",assessment:["Mid-term written exam covering topics of the first three weeks","Final written exam covering the entire course"],slot:"A"},
+"INT1005":{title:"Commercializing Science and Technology",coordinator:"Dr. Jermain Kaminski, School of Business Economics, Department of Organization, Strategy and Entrepreneurship.",contact:"jermain.kaminski@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Fostering an entrepreneurial spirit, regardless of your background","Understanding the commercialization of science and technology","Exploring and discussing scientific literature and practical case studies","Learning science communication in a new technological context","Getting to know technology entrepreneurs and experts","Prototyping and presenting your own business idea"],description:"This course aims to provide you with the tools and expertise required to move a scientific or technological idea from the lab to the marketplace. You will have the opportunity to immerse yourself in a technology field of your choice, such as biotechnology, machine learning, or quantum computing, and gain a deep understanding of how to communicate, identify, and address a new startup idea. Through real-world cases, readings, media, and activities including group work and LEGO Serious Play, you will explore key entrepreneurial and strategic topics.",literature:"Canvas will include all academic papers, case materials, and websites.",format:"Problem-based learning, a science communication task, and a startup project.",assessment:["Participation","Session chairing","Technology podcast","Prototyping and presentation of a science-based startup idea"],slot:"A"},
+"MAT2005":{title:"Probability and Statistics",coordinator:"Dr. Otti D'Huys, Faculty of Science and Engineering, Department of Data Science and Knowledge Engineering.",contact:"",prereqs:["MAT2006"],coreqs:[],objectives:["To have deep understanding of fundamental concepts in probability and statistics","To be familiar with the most frequently used probability distributions/densities and statistical procedures","To develop a critical thinking when deciding whether certain statistical procedure is the most suitable","To be able to read and summarize scientific articles in applied probability/statistics"],description:"Many real-life situations involve uncertainty and give rise to problems in the fields of probability theory or statistics. In this course, the focus will be on the deep understanding of tools which are necessary to analyse such situations. Topics include basics of probability theory, combinatorial principles, random variables, probability distributions, sample distributions, confidence intervals, and hypothesis tests.",literature:"\u2022 Walpole, Myers, Myers & Ye: Probability & Statistics for Engineers & Scientists (any edition)\n\u2022 Lecture notes and selected scientific articles (via Canvas)",format:"Lectures and tutorials.",assessment:["A midterm exam (30%)","A final exam (50%)","A practical group assignment (20%)"],slot:"A",note:"This course fulfils the MAT requirement."},
+"BIO3004":{title:"Animal Behaviour",coordinator:"Dr. Linnea van Griethuijsen, Faculty of Science & Engineering, Maastricht Science Programme.",contact:"l.vangriethuijsen@maastrichtuniversity.nl",prereqs:["BIO2004 General Zoology*","BIO2005 Evolutionary Biology"],coreqs:[],objectives:["To gain an understanding of how animal behaviour is studied","To recognize ultimate and proximate causes of behaviour","To understand what triggers behaviour and its importance in survival and reproductive success","To gain a general knowledge of the development of the field of animal behaviour"],description:"This course will introduce you to how behaviour of animals is studied and the history of this field. We will look at the origins of behaviour, the function of behaviour in survival and reproduction, and how behaviours evolve. Topics include evolution of altruism, reproductive behaviour, communication, foraging strategies, predator avoidance, and migration. *Students without BIO2004 but with sufficient biology background may take this course with a waiver.",literature:"\u2022 Rubenstein (2022). Animal Behaviour (12th edition). Sinauer / Oxford University Press.\n\u2022 Scientific articles via UM library.",format:"Lecture and 2 tutorials per week.",assessment:["Final exam","Presentation","Animal behaviour video","Interaction with literature using an online tool"],slot:"B"},
+"PHY2007":{title:"Optics",coordinator:"dr. Sebastian Steinlechner, Gravitational Waves and Fundamental Physics, Faculty of Science and Engineering.",contact:"s.steinlechner@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["To acquire an understanding of optical systems and how they behave in nature","To design imaging systems and evaluate their resolution, field of view and magnification","To understand the limitations and aberrations in optical systems","To understand the wave nature of light and describe interferometers and diffraction gratings","To understand and describe effects of polarization"],description:"The study of optics begins with a geometrical approach, modelling light as rays which follow a straight line until they interact with an optical element, such as a mirror or lens. After the geometrical approach, we will move to physical optics where light is considered as a wave, encountering polarization, interference, diffraction, and their applications.",literature:"\u2022 Y. Mej\u00eda-Barbosa, Fundamentals of Optics, SPIE (open access)\n\u2022 S. Konijnenberg et al., BSc Optics, 2nd edition, TU Delft (open access)",format:"Weekly lectures and two tutorial meetings with practical demonstrations and computer simulations.",assessment:["Mid-term presentation","Final written exam"],slot:"B",recommended:["PHY2003 Vibrations and Waves"]},
+"INT2008":{title:"Molecular Toxicology",coordinator:"Dr. Misha Vrolijk, Faculty of Health, Medicine and Life Sciences, Department of Pharmacology and Toxicology.",contact:"m.vrolijk@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["To gain knowledge on experimental approaches to identify and quantify metabolites and reactive intermediates","To get acquainted with procedures to assess the toxicity of drugs and chemicals","To understand the role of bioactivation and bio-inactivation in toxicity","To be able to apply strategies used to predict toxicity","To understand strategies to reduce or prevent toxicity","To understand risk factors involved in inter-individual susceptibility to xenobiotics"],description:"Human molecular toxicology studies the molecular mechanisms underlying toxicity of compounds in man. The conversion to reactive intermediates and metabolites is key in the actual toxicity of compounds. The course covers molecular mechanisms determining selective toxicity, biotransformation enzymes, genetic polymorphisms, reactive intermediates, structure-activity relationships, and strategies to reduce toxicity.",literature:"During the course, a selection of book chapters and scientific papers is made available.",format:"Lectures, short practicals and tutorial group meetings.",assessment:["A final examination (open questions and multiple choice)","A presentation on a selected topic","Contributions to tutorial group meetings"],slot:"B"},
+"INT3011":{title:"Landscape Archaeology",coordinator:"Dr. Kyle Jazwa, Maastricht Science Programme, Faculty of Science and Engineering.",contact:"k.jazwa@maastrichtuniversity.nl",prereqs:["INT2012: Archaeological Science"],coreqs:[],objectives:["Gain a deeper understanding of archaeological research, fieldwork, and analysis","Understand how sciences can be applied to interdisciplinary research","Experience how a specific scientific field can be applied to archaeology projects","Become a productive member of an interdisciplinary research group","Gain preparation for upper-level archaeological research"],description:"Students will apply their science background to archaeology and practice more advanced archaeological analysis and interpretation. The course focuses on a single archaeological case study chosen by the class. Students will develop a program of archaeological field- and lab-work, propose research questions, and create a multidisciplinary research proposal.",literature:"None (assigned research articles)",format:"Interactive course meetings and group tutorials.",assessment:["Quizzes (2)","Research Journal","Peer Assessment","Research Paper (group assignment)"],slot:"B"},
+"MAT2004":{title:"Linear Algebra",coordinator:"Martin Frohn, Faculty of Science and Engineering, Department of Advanced Computing Sciences.",contact:"martin.frohn@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Introduction to the main topics of linear algebra","Understanding basic concepts and techniques","Developing practical skills to solve problems from a wide range of application areas"],description:"In this course you will gain insights into algebraic and geometric concepts including vectors, matrices, linear transformations, eigenvalues and eigenvectors and orthogonality. You will learn to perform basic algorithmic calculations with matrices and equations.",literature:"David C. Lay, Steven R. Lay, Judi J. McDonald, Linear Algebra and its Applications, 6th ed., Pearson.",format:"One lecture and two tutorial sessions per week.",assessment:["One mid-term","Written exam"],slot:"B",note:"This course fulfils the MAT requirement."},
+"BIO2002":{title:"Ecology",coordinator:"Dr. John Sloggett, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"j.sloggett@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["To understand what ecology encompasses and its relevance for humanity","To understand different levels of ecological organisation","To understand concepts, theories, and evidence about ecological processes","To understand the impact of humans on natural processes"],description:"Ecology is the study of the interactions of organisms with each other and with the abiotic environment. It covers individuals, populations, communities and ecosystems. Particular focus is placed on the role that humankind plays in ecology today and how factors such as deforestation, eutrophication and invasive species have affected natural systems.",literature:"Smith, T.M. & Smith, R.L. (2015) Elements of Ecology, 9th edition.",format:"One lecture plus two tutorials per week.",assessment:["Tutorial grade","Debate","Exam"],slot:"C"},
+"BIO2006":{title:"Biotechnology",coordinator:"Dr. David Cortens, Maastricht Science Programme.",contact:"david.cortens@maastrichtuniversity.nl",prereqs:["BIO2001: Cell Biology"],coreqs:[],objectives:["Get insight in the different fields of biotechnology and their impact on society","Learn the theory of essential biotechnological techniques","Generate a biotechnological idea with potential to be commercialized"],description:"Biotechnology is a thriving, innovative and diverse field in science and industry. This course explores different fields of biotechnology and provides understanding of how applications influence our lives. You will work in small groups to come up with your own biotechnological idea and develop it into a prospective commercial product.",literature:"Thieman et al, Introduction to Biotechnology (4th edition, global edition). Pearson.",format:"Weekly lectures and tutorial group meetings.",assessment:["Written midterm exam","Peer review","Final presentation"],slot:"C"},
+"CHE3012":{title:"Nanomaterials and Catalysis",coordinator:"Annelies van der Bok, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"annelies.vanderbok@maastrichtuniversity.nl",prereqs:["CHE2002/CHE3010 Inorganic Chemistry"],coreqs:[],objectives:["Understand the basic principles of heterogeneous, homogeneous, and biocatalysis","Formulate advantages and disadvantages of different types of catalysis","Explain how nanomaterial properties influence catalytic activity","Explain the influence of nanoparticle size and shape on optical properties","Describe how colloidal nanoparticles can be controlled during synthesis"],description:"Nanomaterials are a rapidly growing class of materials. Their large surface-to-volume ratio makes them ideal for catalytic reactions, and they possess tunable physical properties on the nanoscale. The course covers catalysis, nanostructures, quantum confinement, surface plasmon resonance, and synthesis of colloidal nanoparticles.",literature:"\u2022 Catalysis: Concepts and Green Applications; Gadi Rothenberg, 2nd Edition, Wiley-VCH\n\u2022 Nanoparticles: Workhorses of Nanoscience; C. de Mello Donega, Springer",format:"Lectures and tutorial classes.",assessment:["Tutorial group participation","Take-home and/or group assignments","Final examination"],slot:"C",recommended:["CHE2001 Organic Chemistry","CHE2003 Physical Chemistry"]},
+"PHY3006":{title:"General Relativity",coordinator:"Dr. Gideon Koekoek, Gravitational Waves and Fundamental Physics, Faculty of Science and Engineering.",contact:"gideon.koekoek@maastrichtuniversity.nl",prereqs:["PHY3002 Theory of Relativity or PHY2011 Special Relativity"],coreqs:[],objectives:["To understand Special Relativity as a tensor theory","To reformulate gravity as curvature of spacetime","To understand tensor algebra as a mathematical apparatus","To calculate spacetime curvature in the presence of mass and energy","To calculate motion in curved spacetime","To understand black holes, cosmology, and gravitational waves"],description:"General Relativity is the best theory of gravity that we have. In this course, we will build up the General Theory of Relativity, study the mathematics needed, and apply it to Schwarzschild black holes, Friedmann-Robertson-Walker Universes, and gravitational waves.",literature:"\u2022 Lecture Notes by the lecturer\n\u2022 Recommended: \"Gravity\" by James B. Hartle\n\u2022 Recommended: \"Gravitation & Cosmology\" by Stephen Weinberg",format:"Interactive tutorials with group-effort exercises plus individual exercises.",assessment:["Midterm exam","Final exam","Peer review"],slot:"C"},
+"BIO3003":{title:"Medical Microbiology",coordinator:"Frank Stassen, Faculty of Health, Medicine and Life Sciences.",contact:"f.stassen@maastrichtuniversity.nl",prereqs:["BIO2001 Cell Biology","BIO2007 Genetics"],coreqs:["PRA3010"],objectives:["To obtain basic knowledge of medical microbiology (bacteriology, virology and genetic modification)","To study the characteristics of micro-organisms in relation to infectious diseases"],description:"The course starts with introduction lectures on Bacteriology and Virology, covering replication, classification, metabolism and antibiotic resistance. Subsequent weeks cover infectious diseases, outbreaks, resistance, and the importance of the microbiome. The final part deals with genetically modified microorganisms.",literature:"Murray. Medical Microbiology. (8th ed.), Elsevier Mosby.",format:"Lectures and tutorial group meetings.",assessment:["A final examination (multiple choice and open questions, 70%)","A group presentation (30%)"],slot:"D"},
+"MAT1007":{title:"Mathematical Tools for Scientists",coordinator:"Dr. Mariet Hofstee, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"mariet.hofstee@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["To acquire understanding of mathematical tools useful in Natural Sciences","To be able to apply these tools to appropriate situations","To gain appreciation for the use of mathematics in science"],description:"This course introduces concepts important in many natural sciences. Most suitable for students interested in non-mathematical focused courses who want to further their understanding of mathematics. Topics include differentiation and integration, differential equations, mathematical series, exponential decay and growth, vectors, matrices, and introduction to linear algebra.",literature:"Open Educational Resources (OER) available online.",format:"Lecture and tutorials each week.",assessment:["Online quizzes on WeBWorK","Written midterm exam","Written final exam","Short written final paper"],slot:"D",note:"This course fulfils the MAT requirement."},
+"INT2014":{title:"Imaging Engineering",coordinator:"Dr. Gavin Hazell, Faculty of Science and Engineering.",contact:"gavin.hazell@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Understand the underlying principles of various imaging systems","Analyse and evaluate the functionality of different imaging modalities","Critically assess the limitations and challenges of imaging systems"],description:"Imaging technologies are at the forefront of scientific exploration and analysis. This course introduces the fundamental principles and advanced techniques of imaging engineering applied across areas including biomedical imaging, planetary exploration and space observation.",literature:"Primary literature accessible through Canvas/UM Library. No textbook required.",format:"Weekly lectures and problem-based learning.",assessment:["Various individual and group activities"],slot:"D"},
+"PHY2005":{title:"Fundamentals of Quantum Mechanics",coordinator:"Dr. Keri Vos, Gravitational Waves and Fundamental Physics, Faculty of Science and Engineering.",contact:"k.vos@maastrichtuniversity.nl",prereqs:["At least one of: MAT2004 Linear Algebra, MAT2006 Calculus, MAT2008"],coreqs:[],objectives:["Understand the foundations of Quantum Mechanics","Solve Schr\u00f6dinger\u2019s wave equation for solvable potentials","Calculate QM expectation values and time evolution","Use operator and vector space notation","Calculate non-classical behaviour from QM postulates","Derive and analyze hydrogen wavefunctions in 3D"],description:"This course dives into the mathematical foundation of Quantum Mechanics. Topics include failings of classical physics, Schr\u00f6dinger equation solutions for square well potential and harmonic oscillator, linear-algebraic description, commutation relations, Heisenberg\u2019s uncertainty principle, spin, Pauli\u2019s exclusion principle, and hydrogen atom orbitals.",literature:"\"Introduction to Quantum Mechanics\", David J Griffiths.",format:"Weekly lecture and two tutorials.",assessment:["Written Midterm exam","Written Final exam"],slot:"D",recommended:["MAT2006 Calculus","MAT2004 Linear Algebra","PHY2001 Classical Mechanics"]},
+"NEU1003":{title:"Computational Neuroscience",coordinator:"Prof. Dr. Renaud B. Jolivet, Maastricht Centre for Systems Biology and Bioinformatics (MaCSBio).",contact:"r.jolivet@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Explain the importance of mathematical and computational methods in studying the nervous system","Detail the variety of methods and approaches developed in the field","Apply knowledge to study problems in computational neuroscience","Explain the major remaining challenges in computational understanding of the nervous system"],description:"Neuroscience as a field is driven today mostly by technology. The vast amount of data collected makes it essential to develop mathematical and computer-based methods. This course introduces basic concepts in neuroscience and explains how to develop models to study the brain at various scales, from sub-cellular level to neural network and systems levels.",literature:"\u2022 Abbott & Dayan, \"Theoretical Neuroscience\" MIT Press, 2001\n\u2022 Gerstner et al., \"Neuronal Dynamics\" Cambridge University Press, 2014",format:"Weekly lecture, tutorial group meeting, and hands-on practical sessions.",assessment:["Group presentation (30%)","Written exam (70%)"],slot:"E"},
+"PHY3005":{title:"Electrodynamics",coordinator:"dr. Stefan Danilishin, Gravitational Waves and Fundamental Physics, Faculty of Science and Engineering.",contact:"stefan.danilishin@maastrichtuniversity.nl",prereqs:["PHY2004 Electricity and Magnetism"],coreqs:[],objectives:["To acquire general understanding of electrodynamics beyond stationary cases","To be able to use Maxwell equations to solve practical problems","To get acquainted with the mathematical apparatus of field theories and potentials","To understand electromagnetic wave propagation and generation","To understand conservation laws for EM fields"],description:"Electrodynamics describes all non-quantum aspects of electric and magnetic fields and their interaction with charged matter. The course covers Maxwell\u2019s equations, scalar and vector potentials, conservation laws, Poynting\u2019s theorem, motion of charged particles, electromagnetic wave propagation, and the relativistic covariant form of Maxwell\u2019s equations.",literature:"\u2022 \"Introduction to Electrodynamics\", David Griffiths, 4th Edition\n\u2022 Handouts on specific texts during lectures",format:"White-board style lectures and interactive tutorial sessions with peer-reviewed homework.",assessment:["Midterm exam","Final exam","Peer-reviewed homework"],slot:"E",recommended:["MAT2009 Multivariable Calculus","PHY2011 Special Relativity"]},
+"CHE2007":{title:"Solid State Chemistry",coordinator:"Dr. Giuditta Perversi, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"g.perversi@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Expand knowledge of Chemistry in a solid state framework","Understand fundamental science behind chemistry in solid state","Familiarize with materials of high technological relevancy","Understand state-of-the-art and challenges of the field","Provide foundation for future master-level studies"],description:"Solid state chemistry (Materials chemistry) is a very technologically relevant branch of chemistry. The course covers electrical conduction, batteries, solar cells, magnets and superconductors, with student preferences taken into account for additional modules.",literature:"\u2022 A.R. West, \"Solid State Chemistry and its applications\", 2nd Ed, 2014\n\u2022 P.M. Woodward et al., \"Solid State Materials Chemistry\", Cambridge University Press, 2021",format:"One lecture and two tutorials per week.",assessment:["Midterm written examination","Final examination","Homework assignments and/or tutorial contributions"],slot:"E"},
+"INT2009":{title:"Biophysics",coordinator:"Dr. Anjusha Mathew, M4i Institute, Faculty of Health, Medicine, and Life Sciences.",contact:"anjusha.mathew@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Understand key concepts in molecular and cellular biophysics","Have a comprehensive overview of biophysical techniques","Compare different biophysical techniques and choose appropriate ones","Be able to understand scientific publications using biophysical methods"],description:"Biophysics applies the principles of physics and chemistry to understand how biological systems work. The course provides a comprehensive overview of biophysical techniques covering transport, hydrodynamics, mass spectrometry, spectroscopy, diffraction, microscopy, computational modelling, and NMR.",literature:"\u2022 \"Biophysical Techniques\" by Iain D. Campbell, Oxford University Press\n\u2022 \"Methods in Molecular Biophysics\" by Serdyuk and Zaccai, Cambridge University Press",format:"Lectures with PBL tutorials.",assessment:["Midterm & final written exams"],slot:"E",recommended:["CHE2006 Biochemistry","BIO2001 Cell Biology","INT2010 Principles of Mass Spectrometry"]},
+"PHY2008":{title:"Solar System Astronomy",coordinator:"Mr. Chad Ellington, Faculty of Science and Engineering, Maastricht Science Programme.",contact:"chad.ellington@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Evaluate usefulness of spectroscopic observations","Interpret historical observations of planetary positions","Understand solar nebula formation scenarios","Describe surface modification mechanisms of terrestrial planets","Compare atmospheric retention capabilities of solar system bodies","Summarize properties of minor bodies and assess hazardous orbits"],description:"The course begins with our Moon, continuing with historical observations of planetary motions, formation of our solar system and physical characteristics of terrestrial planets, gas/ice giants, natural satellites, asteroids, comets, planetesimals and dwarf planets.",literature:"\u2022 Ryden, B. & Peterson, B. (2020). Foundations of Astrophysics. Cambridge\n\u2022 Astronomy 2e via OpenStax",format:"Overview lectures and discussion group tutorials each week.",assessment:["Conceptual assessments","Tutorial exercises","Tutorial proposal","Midterm","Final examination"],slot:"E"},
+"PRA1003":{title:"Basic Physics Laboratory",coordinator:"Suzan du Pree & Dr. Chris Pawley, Faculty of Science and Engineering, MSP.",contact:"suzan.dupree@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Acquire understanding of practical methods in experimental physics","Solve technical problems in physical experiments","Relate experiments to relevant physical theory","Process empirical data using statistical and graphical tools","Properly describe experimental methods and results"],description:"The aim is to understand physics by performing instructive physical experiments that reveal fundamental principles. A collection of 7 different experiments covering Mechanics (Newton\u2019s Laws, conservation of momentum, projectile motion), Thermodynamics (thermal energy, ideal gas law) and Optics (Michelson\u2019s interferometer).",literature:"No book directly associated. Suitable textbook: University Physics with Modern Physics, Young & Freedman.",format:"Physics laboratory. Students work in small teams performing a different experiment each week.",assessment:["Lab reports","In-lab assignments"],slot:"PRA"},
+"PRA1005":{title:"Data Collection Techniques in Neuroscience",coordinator:"Dr. Mark Roberts, Faculty of Psychology and Neuroscience, Department of Cognitive Neuroscience.",contact:"mark.roberts@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Familiarize with basic techniques for data collection and analysis in neuroscience","Learn experimental design, data collection, analysis and interpretation","Learn fundamentals of MATLAB and the Fieldtrip toolbox"],description:"This skill course introduces fundamentals of experimental design, data collection, analysis and interpretation, covering methods for measuring behaviour, perception and electrophysiology. Students will learn MATLAB programming for running experiments and data analysis.",literature:"Hand-outs and relevant literature provided by coordinator.",format:"Lectures, Group meetings and computer meetings.",assessment:["Intermediate assignment based on group work","Presentation of a selected journal article","Lab report"],slot:"PRA"},
+"PRA2007":{title:"Physics Laboratory",coordinator:"Dr. Chris Pawley, Faculty of Science & Engineering, Maastricht Science Programme.",contact:"c.pawley@maastrichtuniversity.nl",prereqs:["PRA1003 Basic Physics Laboratory"],coreqs:[],objectives:["Obtain deeper understanding of physics through key experiments in Classical Mechanics, Quantum Mechanics, and Electromagnetism","Further training of physics laboratory techniques","Data analysis and reporting skills"],description:"Experiments include the photoelectric effect, blackbody radiation, angular momentum, Faraday\u2019s law, and Coulomb\u2019s law. Focus on design and execution of experiments and their relation to fundamental physics.",literature:"\u2022 University Physics with Modern Physics, Young & Freedman\n\u2022 Practical Physics, Squires\n\u2022 Measurements and their Uncertainties, Hughes & Hase",format:"Small team work with a different physics experiment each week.",assessment:["Submitted laboratory reports","Ability to design and execute experiments"],slot:"PRA"},
+"PRA2008":{title:"Physical Chemistry Skills",coordinator:"Dr. Veaceslav Vieru, Faculty of Science and Engineering, MSP.",contact:"v.vieru@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Perform various physical chemistry experiments and analyze data","Work with kinetics analysis, thermodynamics analysis and spectroscopy analysis"],description:"During this practicum, students investigate how physical data is extracted from different experiments. Each week focuses on different aspects of physical chemistry (thermodynamics, kinetics, spectroscopy). Error analysis is a large component.",literature:"Atkins, Peter. Physical chemistry (any edition). Oxford University Press.",format:"Weekly practical sessions.",assessment:["Lab reports","Lab notebooks","Results obtained","Error analysis","Post-lab questions","Final paper"],slot:"PRA",recommended:["PHY2002 Thermodynamics","CHE3007 Chemical Kinetics"]},
+"PRA2009":{title:"Field Skills in Biology",coordinator:"Dr. Phil Klahs, Faculty of Science and Engineering, MSP.",contact:"phil.klahs@maastrichtuniversity.nl",prereqs:["PRA1102 Introduction to Scientific Research II"],coreqs:[],objectives:["Learn to generate well controlled, reliable results in the field","Use diversity of methods to collect, count and identify organisms","Learn basic means to plan for and interpret complex field data"],description:"The field is a much less controlled but more realistic environment than the lab. This course teaches GIS computer mapping, species identification, field experiment planning, statistical work, spatial analysis, and appropriate map formatting.",literature:"Wheater, Bell & Cook (2021). Practical Field Ecology, 2nd edition (recommended).",format:"Practical classes outdoors. Appropriate clothing required.",assessment:["Practical exercises online and in the field"],slot:"PRA"},
+"PRA2020":{title:"Practical Mass Spectrometry",coordinator:"Dr. A. Mathew, Maastricht Multimodal Molecular Imaging Institute (M4i).",contact:"anjusha.mathew@maastrichtuniversity.nl",prereqs:["INT2010 Principles of Mass Spectrometry"],coreqs:[],objectives:["Basic understanding of ion physics and vacuum technology","Practical experience with ESI, MALDI and SIMS ionization techniques","Experience with mass analysers (Orbitrap, TOF, FT-ICR)","Training in tandem mass spectrometry (MS/MS)","MS Imaging experiments","Advanced data processing software"],description:"Hands-on experience with mass spectrometer design, parameter optimization, ionization technologies, and molecular characterization. Applications include human tissues, lipids, proteins, pharmaceutical drugs, biomedical materials and industrial chemicals.",literature:"Mass Spectrometry Principles and Applications (De Hoffmann & Stroobant).",format:"Series of hands-on experiments in small groups.",assessment:["Skills training participation","Laboratory report","Viva voce"],slot:"PRA"},
+"PRA2023":{title:"Astronomical Observing Techniques",coordinator:"Mr. Chad Ellington, Faculty of Science and Engineering, MSP.",contact:"chad.ellington@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Design, use and perform measurements in observational experiments","Manipulate and measure light","Carry out data reduction/analysis of astronomical observations","Learn software routines for processing data"],description:"Learning various aspects of observational astronomical techniques through hands-on exercises, laboratory experiments, and computer-based exploration. Topics include celestial coordinate systems, spectroscopy, image formation, telescope types, photometry, and radio observations.",literature:"\u2022 To Measure the Sky, F.R. Chromey, Cambridge University Press\n\u2022 AAVSO Observing Manuals\n\u2022 AstroImageJ",format:"Small teams performing different observations/exercises each week.",assessment:["In-practical experimental design","Weekly laboratory reports","Observing logbook evaluation"],slot:"PRA",recommended:["PRA1003","PHY2008","PHY2009","PHY2010"]},
+"PRA2029":{title:"3D Visualizations and Transformations",coordinator:"Dr. May Lee, Faculty of Science and Engineering, MSP.",contact:"may.lee@maastrichtuniversity.nl",prereqs:[],coreqs:[],objectives:["Interpret different 2D views of a 3D object","Apply geometric relations and constraints","Collaborate with peers to explain science behind physical objects","Decompose objects and recreate scaled models using 3D software","Learn about 3D scanning methods (photogrammetry, 3D scanning)"],description:"Interpreting images of various objects from 2D and 3D perspectives, analysing symmetries to explain relationships between physical form and function. Creating animations with 3D visualization software.",literature:"Primary literature via Canvas/UM Library. No textbook required.",format:"Instructional presentations followed by group/individual practice.",assessment:["Group presentation","Portfolio documenting analysis","Collaborative group work"],slot:"PRA"},
+"PRA2034":{title:"General Chemistry Laboratory",coordinator:"Dr. Chris Bahn, Faculty of Science and Engineering, MSP.",contact:"chris.bahn@maastrichtuniversity.nl",prereqs:["PRA1101/2 - Introduction to Scientific Research"],coreqs:["CHE2010 - General Chemistry"],objectives:["Recognize standard laboratory glassware and analytical equipment","Correctly carry out common laboratory procedures","Measure and report quantities with appropriate precision","Convert raw data to a physically meaningful form"],description:"This course focuses on base skills needed in a chemistry laboratory, taught through a series of lab experiments designed to develop skills needed for more advanced chemistry courses.",literature:"The textbook from the pre-requisite course. Instrument manuals available.",format:"Interactive laboratory sessions.",assessment:["Lab reports (theoretical background, procedures, data, discussion)","Laboratory notebook and lab safety"],slot:"PRA"},
+"PRA3003":{title:"Molecular Biology Skills",coordinator:"Dr. Kathia Jimenez, Faculty of Science and Engineering, MSP.",contact:"k.jimenezmonroy@maastrichtuniversity.nl",prereqs:["PRA2014 Genetics","1000-level core courses"],coreqs:["BIO3001 Molecular Biology"],objectives:["Preparation and analysis of EMSA","Preparation and analysis of immunoprecipitation","Protein quantification from leukocytic samples","Application of molecular cloning techniques","Preparation of electrophoretic analysis methods"],description:"Obtain detailed practical knowledge about techniques applied to molecular processes in mammalian biology. Topics include intracellular signaling pathways, cellular responses, nucleic acid vs protein interactions, and recombinant DNA.",literature:"Online videos and additional literature via Canvas.",format:"Skills sessions.",assessment:["Lab notebook calculations (10%)","Online quizzes (20%)","Skills evaluation (20%)","2 laboratory reports per team (50%)"],slot:"PRA"},
+"PRA3010":{title:"Microbiology Skills",coordinator:"Frank Stassen, Faculty of Health, Medicine and Life Sciences.",contact:"f.stassen@maastrichtuniversity.nl",prereqs:["BIO2001 Cell Biology","BIO2007 Genetics"],coreqs:["BIO3003 Microbiology"],objectives:["Perform microbiological tests using biochemical and molecular methods","Identify infectious agents and genetic relatedness in outbreaks"],description:"Basic microbiological techniques including microbial culture, biochemical tests, antimicrobial resistance, and molecular characterization. Students analyze a potential outbreak scenario and present results as a poster.",literature:"\u2022 Murray, Medical Microbiology (8th ed.), Elsevier Mosby\n\u2022 Primary literature",format:"Weekly laboratory experiments.",assessment:["Assignment for first practical","Written research plan","Poster presentation on outbreak analyses"],slot:"PRA"},
+"PRA3011":{title:"The Limburg Landscape",coordinator:"Dr. Phil Klahs, Faculty of Science and Engineering, MSP.",contact:"phil.klahs@maastrichtuniversity.nl",prereqs:["PRA2009 Field Skills in Biology"],coreqs:[],objectives:["Familiarize with the biological characteristics and geological history of Limburg","Understand the evolution of the natural landscape"],description:"The landscape of Limburg is unique in the Netherlands. Topics include geological history, river biology, fungal biology, nature conservation, plant/pollinator interactions, and GIS software. Field visits by bike in the South Limburg region.",literature:"Primary literature only. No textbook required.",format:"Weekly field excursions by bike. Students need a proper bicycle.",assessment:["Individual review report on an excursion","Group review report on organisms witnessed"],slot:"PRA"},
+"PRA3025":{title:"Science Communication: Curating Science Exhibits",coordinator:"Dr. May Lee & Dr. Kyle Jazwa, Faculty of Science and Engineering, MSP.",contact:"may.lee@maastrichtuniversity.nl",prereqs:["PRA2027: Fundamentals of Science Communication"],coreqs:[],objectives:["Address how museums function as mediums of memory","Analyse narratives constructed in exhibits","Collaborate to propose and implement a science exhibit design","Properly select, care for, and manage museum artefacts","Engage with trends and issues in curatorial practices"],description:"Analysing the intersections between history and science/technology with respect to exhibit curation, and applying those analyses towards proposing and implementing a design using the display cases on the ground floor of PHS1.",literature:"Primary literature via Canvas/UM Library. No textbook required.",format:"Instructional presentations followed by group work contributing to a class exhibit on Maastrichtian artefacts.",assessment:["Proposed designs quality","Analysis paper on local museum curatorship","Collaborative group work","Implementation of designs in display cases"],slot:"PRA"}
+};
+
+// ── Catalogue UI ──
+function openCatalogue(){
+  const overlay=document.getElementById('catOverlay');
+  overlay.classList.add('show');
+  document.getElementById('catSearch').value='';
+  buildCatalogue('');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('catSearch').focus(),100);
+}
+function closeCatalogue(){
+  document.getElementById('catOverlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('catOverlay').classList.contains('show'))closeCatalogue();});
+
+function filterCatalogue(){
+  buildCatalogue(document.getElementById('catSearch').value);
+}
+
+function buildCatalogue(query){
+  const body=document.getElementById('catBody');
+  const q=query.toLowerCase().trim();
+  const allItems=[...courses,...labs];
+
+  // Group entries by slot/type
+  const groups={};
+  const slotLabels={'A':'Slot A \u2014 Mon AM, Tue AM','B':'Slot B \u2014 Mon PM, Tue PM','C':'Slot C \u2014 Tue AM, Wed AM','D':'Slot D \u2014 Tue PM, Wed PM','E':'Slot E \u2014 Wed AM, Thu AM','PRA':'Practicals / Skills'};
+
+  // Use DESCRIPTIONS keys to get all courses
+  Object.keys(DESCRIPTIONS).forEach(code=>{
+    const desc=DESCRIPTIONS[code];
+    const slot=desc.slot==='PRA'?'PRA':desc.slot;
+    // Apply search filter
+    if(q){
+      const searchable=(code+' '+desc.title+' '+(desc.description||'')+' '+(desc.coordinator||'')+' '+(desc.objectives||[]).join(' ')).toLowerCase();
+      if(!searchable.includes(q))return;
+    }
+    if(!groups[slot])groups[slot]=[];
+    groups[slot].push({code,desc});
+  });
+
+  const order=['A','B','C','D','E','PRA'];
+  let html='';
+  let total=0;
+
+  order.forEach(sl=>{
+    if(!groups[sl])return;
+    const items=groups[sl];
+    total+=items.length;
+    html+=`<div class="cat-group"><div class="cat-group-title">${slotLabels[sl]||sl} (${items.length})</div>`;
+    items.forEach(({code,desc})=>{
+      const csvItem=allItems.find(c=>c.Code===code);
+      const days=csvItem?.Days||[];
+      const dayChips=days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
+      const tags=[];
+      if(desc.slot!=='PRA'&&desc.slot)tags.push(`<span class="slotb sl-${desc.slot}">SLOT ${desc.slot}</span>`);
+      if(desc.prereqs&&desc.prereqs.length)tags.push('<span class="tg tg-pre">\u25b2 Pre-req</span>');
+      if(desc.coreqs&&desc.coreqs.length)tags.push('<span class="tg tg-co">\u25ca Co-req</span>');
+
+      html+=`<div class="cat-card" id="cat-${code}" onclick="toggleCatCard('${code}')">`;
+      html+=`<div class="cat-card-top"><span class="cc-code">${code}</span><span class="cc-title">${desc.title}</span><div class="cc-tags">${tags.join('')}</div></div>`;
+      html+=`<div class="cc-coord">${desc.coordinator||''}${days.length?' \u00b7 ':''}<span class="days" style="display:inline-flex;gap:3px;vertical-align:middle">${dayChips}</span></div>`;
+
+      // Detail section
+      html+=`<div class="cat-detail">`;
+      if(desc.description){html+=`<h4>Description</h4><p>${esc(desc.description)}</p>`;}
+      if(desc.objectives&&desc.objectives.length){html+=`<h4>Objectives</h4><ul>${desc.objectives.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>`;}
+      if(desc.prereqs&&desc.prereqs.length){html+=`<h4>Prerequisites</h4><ul>${desc.prereqs.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`;}
+      if(desc.coreqs&&desc.coreqs.length){html+=`<h4>Co-requisites</h4><ul>${desc.coreqs.map(c=>`<li>${esc(c)}</li>`).join('')}</ul>`;}
+      if(desc.recommended&&desc.recommended.length){html+=`<h4>Recommended</h4><ul>${desc.recommended.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`;}
+      if(desc.literature){html+=`<h4>Literature</h4><p>${esc(desc.literature).replace(/\n/g,'<br>')}</p>`;}
+      if(desc.format){html+=`<h4>Instructional Format</h4><p>${esc(desc.format)}</p>`;}
+      if(desc.assessment&&desc.assessment.length){html+=`<h4>Assessment</h4><ul>${desc.assessment.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`;}
+      if(desc.note){html+=`<p style="font-size:11.5px;color:var(--orange);font-style:italic;margin-top:8px">${esc(desc.note)}</p>`;}
+      html+=`</div></div>`;
+    });
+    html+=`</div>`;
+  });
+
+  if(!total)html='<div class="cat-empty">No courses match your search.</div>';
+  body.innerHTML=html;
+  document.getElementById('catCount').textContent=`${total} course${total!==1?'s':''}`;
+}
+
+function toggleCatCard(code){
+  const el=document.getElementById('cat-'+code);
+  if(el)el.classList.toggle('expanded');
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body>
 </html>
