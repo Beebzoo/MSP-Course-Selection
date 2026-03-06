@@ -12,9 +12,9 @@
    ============================================================
    Sections:
      1. Reset & Design Tokens    — CSS reset + colour/spacing variables
-     2. Header Bar                — Sticky nav bar (shared with index.html)
-     3. Icons & Nav Links         — Inline SVG utilities + header navigation
-     4. Main Layout               — Centred content container
+     2. Sidebar                   — Fixed left sidebar (shared with index.html)
+     3. Icons                     — Inline SVG sizing utilities
+     4. Main Layout               — Centred content container (offset for sidebar)
      5. Search & Filter Bar       — Search input + slot filter chips
      6. Slot Sections             — Grouped headings (Slot A, B, ... Practicals)
      7. Course Cards              — Clickable cards with slot-tinted backgrounds
@@ -22,7 +22,7 @@
      9. Star / Bookmark           — Shortlist button on each card
     10. Footer                    — Page bottom branding
     11. Loading & Empty States    — Spinner, no-results message
-    12. Responsive (≤ 640px)      — Mobile layout adjustments
+    12. Responsive (≤ 768px)      — Mobile: sidebar collapses
    ============================================================ */
 
 /* ── 1. Reset & Design Tokens ── */
@@ -52,33 +52,40 @@
 html{scroll-behavior:smooth}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--g0);color:var(--g9);min-height:100vh;font-size:14px;line-height:1.6}
 
-/* ── 2. Header Bar ──
-   Single-row sticky header: [Logos] | [Title] ... [Nav links] | [Meta]
-   Dark navy background, 54px tall. Shared layout with index.html. */
-.hdr{position:sticky;top:0;z-index:200;background:var(--navy);box-shadow:0 2px 12px rgba(0,0,0,.15)}
-.hdr-inner{display:flex;align-items:center;padding:0 32px;height:54px;gap:0}
-.hdr-logo{display:flex;align-items:center;gap:14px;margin-right:24px;flex-shrink:0}
-.logo-um{height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.9}
-.logo-msp{height:30px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.85}
-.hdr-divider{width:1px;height:28px;background:rgba(255,255,255,.15);margin:0 18px;flex-shrink:0}
-.hdr-brand-text{display:flex;flex-direction:column;justify-content:center;margin-right:auto;min-width:0}
-.hdr-title{font-family:'TheSans','DM Sans','Inter',-apple-system,sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
-.hdr-sub{font-size:9.5px;color:rgba(255,255,255,.4);letter-spacing:.08em;text-transform:uppercase;margin-top:1px;font-weight:500;white-space:nowrap}
-.hdr-nav{display:flex;align-items:center;gap:2px;margin-left:auto}
-.hdr-meta{display:flex;align-items:center;gap:12px;margin-left:16px;padding-left:16px;border-left:1px solid rgba(255,255,255,.1)}
+/* ── 2. Sidebar ──
+   Fixed left sidebar (260px). Same structure as index.html. */
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:260px;background:var(--navy);z-index:300;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.sb-top{padding:24px 24px 0}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+.logo-um{height:20px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.85}
+.sb-title{font-family:'TheSans','DM Sans','Inter',-apple-system,sans-serif;font-size:18px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1.2;margin-bottom:4px}
+.sb-sub{font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;font-weight:600;line-height:1.5}
+.sb-nav-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);padding:24px 24px 10px}
+.sb-nav{display:flex;flex-direction:column;gap:2px;padding:0 12px}
+.sb-link{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s;cursor:pointer;border:none;background:none;font-family:inherit;width:100%;text-align:left}
+.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.sb-link.active{background:rgba(255,255,255,.1);color:#fff}
+.sb-link .sb-ico{width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-link .sb-ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sb-link .sb-text{display:flex;flex-direction:column}
+.sb-link .sb-name{font-size:13px;font-weight:600;line-height:1.3}
+.sb-link .sb-desc{font-size:10.5px;opacity:.5;font-weight:400;line-height:1.3;margin-top:1px}
+.sb-link.active .sb-desc{opacity:.6}
+.sb-footer{margin-top:auto;padding:20px 24px 20px}
+.sb-meta{font-size:11px;color:rgba(255,255,255,.3);line-height:1.7;margin-bottom:12px}
+.sb-brand{padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}
+.sb-brand img{height:28px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.3;margin-bottom:8px}
+.sb-brand p{font-size:10px;color:rgba(255,255,255,.2);line-height:1.5}
+.sb-toggle{display:none;position:fixed;top:12px;left:12px;z-index:400;width:40px;height:40px;border-radius:10px;background:var(--navy);border:none;color:#fff;cursor:pointer;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.sb-toggle svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250}
 
-/* ── 3a. Icons — inline SVG sizing utilities ── */
+/* ── 3. Icons — inline SVG sizing utilities ── */
 .ico{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;flex-shrink:0;vertical-align:middle}
 .ico svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── 3b. Nav Links — header navigation with orange underline on active ── */
-.nav-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--rs);font-size:12.5px;font-weight:500;color:rgba(255,255,255,.5);text-decoration:none;transition:all .15s;position:relative;border:none;background:none;cursor:pointer;font-family:inherit}
-.nav-link:hover{color:rgba(255,255,255,.9)}
-.nav-link.active{color:#fff;font-weight:600}
-.nav-link.active::after{content:'';position:absolute;bottom:-1px;left:14px;right:14px;height:2px;background:var(--orange);border-radius:2px 2px 0 0}
-
-/* ── 4. Main Layout ── */
-.main{max-width:1100px;margin:0 auto;padding:32px 24px 80px}
+/* ── 4. Main Layout — offset for 260px sidebar ── */
+.main{max-width:1100px;margin:0 auto;padding:32px 32px 80px;margin-left:260px}
 
 /* ── 5. Search & Filter Bar ──
    Full-width search input with a magnifying glass icon + filter chips
@@ -163,7 +170,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .star-btn.starred{background:var(--warn-bg);color:var(--orange)}
 
 /* ── 10. Footer ── */
-footer{text-align:center;padding:20px 24px;font-size:12px;color:var(--g4);border-top:1px solid var(--g2);background:#fff;display:flex;flex-direction:column;align-items:center}
+footer{text-align:center;padding:20px 24px;font-size:12px;color:var(--g4);border-top:1px solid var(--g2);background:#fff;display:flex;flex-direction:column;align-items:center;margin-left:260px}
 footer .ft-line{margin-bottom:0;font-size:11px}
 
 /* ── 11. Loading & Empty States ── */
@@ -174,18 +181,14 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 .no-results span{font-size:40px;display:block;margin-bottom:12px;opacity:.5}
 .no-results p{font-size:14px}
 
-/* ── 12. Responsive (≤ 640px) — Mobile layout ── */
-@media(max-width:640px){
-  .hdr-inner{padding:0 16px;height:48px}
-  .hdr-logo{gap:10px;margin-right:12px}
-  .logo-um{height:22px} .logo-msp{height:24px}
-  .hdr-divider{margin:0 10px;height:22px}
-  .hdr-title{font-size:13px}
-  .hdr-sub{display:none}
-  .hdr-meta{display:none}
-  .nav-link{padding:8px 10px;font-size:11.5px;gap:4px}
-  .nav-link .ico{width:14px;height:14px}
-  .main{padding:20px 12px 60px}
+/* ── 12. Responsive (≤ 768px) — Mobile: sidebar collapses off-screen ── */
+@media(max-width:768px){
+  .sb-toggle{display:flex}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;box-shadow:none}
+  .sidebar.open{transform:translateX(0);box-shadow:4px 0 20px rgba(0,0,0,.3)}
+  .sb-overlay.show{display:block}
+  .main{margin-left:0;padding:20px 16px 60px;padding-top:60px}
+  footer{margin-left:0}
   .cards-grid{grid-template-columns:1fr}
   .detail-grid{grid-template-columns:1fr}
   .toolbar{flex-direction:column;align-items:stretch}
@@ -195,30 +198,51 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 <body>
 
 <!-- ============================================================
-     HEADER BAR
-     Same unified dark nav bar as index.html.
+     SIDEBAR
+     Same fixed left sidebar as index.html. "Course Catalogue" is active here.
      ============================================================ -->
-<header class="hdr">
-  <div class="hdr-inner">
-    <div class="hdr-logo">
-      <a href="catalogue.html" style="display:flex;align-items:center"><img src="logo-header.png" alt="Maastricht University" class="logo-um"></a>
-      <img src="logo-main.png" alt="MSP" class="logo-msp">
+
+<!-- Mobile hamburger toggle -->
+<button class="sb-toggle" onclick="toggleSidebar()" aria-label="Toggle menu">
+  <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sb-overlay" onclick="toggleSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo">
+      <a href="index.html"><img src="logo-header.png" alt="Maastricht University" class="logo-um"></a>
     </div>
-    <div class="hdr-divider"></div>
-    <div class="hdr-brand-text">
-      <div class="hdr-title">MSP Course Planner</div>
-      <div class="hdr-sub">Maastricht Science Programme</div>
+    <div class="sb-title">MSP Course Planner</div>
+    <div class="sb-sub">Maastricht Science Programme<br>Faculty of Science and Engineering</div>
+  </div>
+
+  <div class="sb-nav-label">Navigation</div>
+  <nav class="sb-nav">
+    <a class="sb-link" href="index.html">
+      <span class="sb-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+      <span class="sb-text"><span class="sb-name">Course Planner</span><span class="sb-desc">Build your schedule</span></span>
+    </a>
+    <a class="sb-link active" href="catalogue.html">
+      <span class="sb-ico"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+      <span class="sb-text"><span class="sb-name">Course Catalogue</span><span class="sb-desc">Browse all courses</span></span>
+    </a>
+    <a class="sb-link" href="index.html#info">
+      <span class="sb-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+      <span class="sb-text"><span class="sb-name">Information</span><span class="sb-desc">Rules &amp; deadlines</span></span>
+    </a>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-meta">
+      <span id="navInfo"></span>
     </div>
-    <nav class="hdr-nav">
-      <a class="nav-link" href="index.html"><span class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span> Planner</a>
-      <a class="nav-link active" href="catalogue.html"><span class="ico"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span> Catalogue</a>
-      <a class="nav-link" href="index.html#info"><span class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span> Info</a>
-    </nav>
-    <div class="hdr-meta">
-      <span id="navInfo" style="font-size:10.5px;color:rgba(255,255,255,.35)"></span>
+    <div class="sb-brand">
+      <img src="logo-main.png" alt="MSP">
+      <p>Your data stays in your browser.<br>Nothing is uploaded.</p>
     </div>
   </div>
-</header>
+</aside>
 
 <!-- ============================================================
      MAIN CONTENT
@@ -570,6 +594,12 @@ function toggleStar(code){
       btn.title=on?'Remove from shortlist':'Add to shortlist';
     }
   }
+}
+
+// ── Sidebar mobile toggle ──
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.querySelector('.sb-overlay').classList.toggle('show');
 }
 
 // ── I. Initialisation ──
