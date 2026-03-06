@@ -6,7 +6,6 @@
 <title>MSP Course Planner</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -39,18 +38,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .hdr-sub{font-size:10.5px;color:var(--g4);letter-spacing:.12em;text-transform:uppercase;margin-top:3px;font-weight:500}
 .cfgbtn{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:var(--rs);font-size:11px;font-weight:500;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);cursor:pointer;font-family:inherit;transition:all .15s}
 .cfgbtn:hover{background:rgba(255,255,255,.15);color:rgba(255,255,255,.9)}
-
-/* ── Transcript Banner ── */
-.tbanner{background:var(--inf-bg);border:1px solid var(--inf-bd);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.tbanner .ti-icon{font-size:20px;flex-shrink:0}
-.tbanner .ti-body{flex:1;min-width:200px}
-.tbanner .ti-body strong{font-size:13px;color:var(--navy);display:block;margin-bottom:2px}
-.tbanner .ti-body p{font-size:12px;color:var(--g5);line-height:1.5}
-.tbanner .ti-body .stu-info{font-size:12px;color:var(--navy);font-weight:600;margin-top:4px}
-.tbanner .ti-body .stu-courses{font-size:11px;color:var(--g5);margin-top:2px}
-.tbanner .btn-sm{padding:7px 14px;font-size:12px;font-weight:600;border-radius:var(--rs);cursor:pointer;border:none;font-family:inherit;transition:all .15s}
-.btn-navy{background:var(--navy);color:#fff} .btn-navy:hover{opacity:.9}
-.btn-clear{background:#fff;color:var(--g5);border:1.5px solid var(--g2)} .btn-clear:hover{border-color:var(--g4)}
 
 /* ── Main ── */
 .main{max-width:860px;margin:0 auto;padding:32px 24px 80px}
@@ -98,7 +85,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .sl-A{background:var(--sa-bg);color:var(--sa)} .sl-B{background:var(--sb-bg);color:var(--sb)} .sl-C{background:var(--sc-bg);color:var(--showScreen)} .sl-D{background:var(--sd-bg);color:var(--sd)} .sl-E{background:var(--se-bg);color:var(--se)}
 .tg{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
 .tg-co{background:var(--inf-bg);color:var(--inf)} .tg-pre{background:var(--warn-bg);color:var(--warn)}
-.tg-elig{background:var(--ok-bg);color:var(--ok)} .tg-inelig{background:var(--err-bg);color:var(--err)}
 .days{display:flex;flex-wrap:wrap;gap:4px}
 .daychip{background:var(--navy);color:#fff;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;letter-spacing:.02em}
 .coord{color:var(--g5);font-size:12px}
@@ -122,7 +108,23 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .pb input[type=checkbox]{width:15px;height:15px;margin-top:3px;flex-shrink:0;cursor:pointer;accent-color:var(--navy)}
 .pb label{cursor:pointer;color:var(--g5)} .pb label .pc{font-weight:600;color:var(--warn)} .pb.conf label .pc{color:var(--ok)}
 .ph{font-size:11px;color:var(--warn);margin-top:3px;display:block;font-style:italic} .pb.conf .ph{display:none}
+.guidance{margin-top:6px;padding:9px 12px;background:rgba(12,74,110,.04);border-left:3px solid var(--inf-bd);border-radius:0 var(--rs) var(--rs) 0;font-size:11.5px;color:var(--g5);line-height:1.6}
+.guidance strong{color:var(--g7);font-weight:600}
+.guidance a{color:var(--inf);font-weight:500;text-decoration:none} .guidance a:hover{text-decoration:underline}
 .seclbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--g4);margin-bottom:10px;margin-top:2px}
+/* ── Next Steps Card ── */
+.nsteps{list-style:none;padding:0;margin:0;counter-reset:ns}
+.nsteps li{position:relative;padding:6px 0 6px 32px;font-size:13px;color:var(--g7);counter-increment:ns}
+.nsteps li::before{content:counter(ns);position:absolute;left:0;top:6px;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.dl-box{padding:12px 14px;border-radius:var(--rs);border:1px solid var(--g2);background:var(--g0)}
+.dl-box .dl-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g4);margin-bottom:3px}
+.dl-box .dl-val{font-size:13px;font-weight:600;color:var(--g9)}
+.dl-box.dl-urgent{border-color:var(--warn-bd);background:var(--warn-bg)}
+.dl-box.dl-urgent .dl-lbl{color:var(--warn)} .dl-box.dl-urgent .dl-val{color:var(--warn)}
+.links-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.links-row a{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--rs);font-size:11.5px;font-weight:500;color:var(--navy);background:var(--sa-bg);border:1px solid rgba(29,78,216,.1);text-decoration:none;transition:all .15s}
+.links-row a:hover{background:var(--navy);color:#fff}
 .emptys{text-align:center;padding:28px 20px;color:var(--g4)} .emptys .ei{font-size:28px;display:block;margin-bottom:8px;opacity:.6} .emptys p{font-size:13px}
 
 /* ── Weekly Timetable ── */
@@ -194,7 +196,6 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .main{padding:12px!important;max-width:100%!important}
   #loading,#errscr{display:none!important}
   .plan-tabs{display:none!important}
-  .tbanner{display:none!important}
   .cmp-view{display:none!important}
   #planview>.card:not(#sumcard){display:none!important}
   #ttcard{display:none!important}
@@ -202,6 +203,8 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .actbar{display:none!important}
   .printonly{display:block!important}
   .sum-status-alert{display:none!important}
+  .guidance{display:none!important}
+  #nextsteps{display:none!important}
   .card-h .spill{display:none!important}
   .card-h .step{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
@@ -213,7 +216,8 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   .hdr-brand{padding:0 16px;height:60px;gap:12px}
   .logo-um{height:32px} .logo-msp{height:36px}
   .hdr-title{font-size:18px}
-  .hdr-bar{padding:0 16px;font-size:11px}
+  .nav-bar{padding:0 16px}
+  .dl-grid{grid-template-columns:1fr}
   .main{padding:20px 12px 60px}
   .card-h{padding:14px 16px} .card-b{padding:16px}
   .actbar{padding:12px 16px}
@@ -249,7 +253,6 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   </nav>
 </header>
 <input type="file" id="csvf" accept=".csv" style="display:none">
-<input type="file" id="pdff" accept=".pdf" style="display:none">
 <main class="main">
   <div id="loading"><div class="spin"></div><p style="font-size:13px">Loading schedule&hellip;</p></div>
   <div id="errscr">
@@ -260,7 +263,6 @@ footer .ft-line{margin-bottom:0;font-size:11px}
     <p style="font-size:11.5px;color:var(--g4);margin-top:8px">&#128274; Everything stays on your device.</p>
   </div>
   <div id="planner">
-    <div id="tbanner" class="tbanner" style="display:none"></div>
     <div class="plan-tabs">
       <button class="ptab active" id="tab-A" onclick="switchPlan('A')"><span class="tlbl">Plan A</span><span class="tst" id="ts-A"></span></button>
       <button class="ptab" id="tab-B" onclick="switchPlan('B')"><span class="tlbl">Plan B</span><span class="tst" id="ts-B"></span></button>
@@ -290,6 +292,10 @@ footer .ft-line{margin-bottom:0;font-size:11px}
       <div class="card-h"><div class="step">3</div><h2>Checks &amp; Confirmations</h2><span class="spill sp-pend" id="chkst">&mdash; Select courses first</span></div>
       <div class="card-b" id="chkbd"><div class="emptys"><span class="ei">&#10003;</span><p>Select your courses above to see checks.</p></div></div>
     </div>
+    <div class="card" id="nextsteps" style="display:none">
+      <div class="card-h"><div class="step">4</div><h2>Next Steps</h2><span class="hint">What to do with your plan</span></div>
+      <div class="card-b" id="nsbd"></div>
+    </div>
     <div class="card" id="sumcard">
       <div class="card-h"><div class="step ok">&#10003;</div><h2>Your Plan</h2><span class="spill sp-pend" id="planst">Incomplete</span></div>
       <div class="printonly" style="padding:14px 24px 0;border-bottom:1px solid var(--g2)">
@@ -313,131 +319,18 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 </footer>
 <script>
 const AUTO='FrameSchedule_P5_v1.csv';
+const DEADLINES={
+  switch:'Friday 6 March 2026, 17:00',
+  withdrawal:'Friday 3 April 2026, 17:00',
+  period:'5',year:'2025\u20132026'
+};
+const LINKS={
+  switchForm:'https://intranet.maastrichtuniversity.nl/en/msp-students/forms-and-downloads-0/withdrawswitch'
+};
 let courses=[],labs=[],cfgV='',cfgP='',cfgY='';
 const PLANS={A:emptyPlan(),B:emptyPlan(),C:emptyPlan()};
 let act='A',cmpMode=false;
-let transcript=null; // {name, pnumber, completed: Set of course codes}
 function emptyPlan(){return{c1:'',c2:'',lab:'',ack:{}};}
-
-// ── PDF Transcript Parsing ──
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-document.getElementById('pdff').addEventListener('change', async e=>{
-  const f=e.target.files[0];if(!f)return;
-  try{
-    const buf=await f.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
-    let allText='';
-    for(let i=1;i<=pdf.numPages;i++){
-      const page=await pdf.getPage(i);
-      const tc=await page.getTextContent();
-      allText+=tc.items.map(it=>it.str).join(' ')+'\n';
-    }
-    parseTranscript(allText);
-  }catch(err){
-    console.error('PDF parse error:',err);
-    alert('Could not read the PDF. Please ensure it is a UM transcript PDF.');
-  }
-  e.target.value='';
-});
-
-function parseTranscript(text){
-  // Extract student name
-  const nameMatch=text.match(/Name\s*\/\s*Naam\s*:\s*([^\n]+?)(?:\s{2,}|Student|$)/i);
-  const name=nameMatch?nameMatch[1].trim():'';
-
-  // Extract student number (P-number or numeric)
-  const numMatch=text.match(/Student\s*number\s*\/\s*Studentnummer\s*:\s*(\S+)/i);
-  const pnumber=numMatch?numMatch[1].trim():'';
-
-  // Extract completed course codes: look for patterns like BIO1101, CHE2010, etc.
-  // A course is completed if it has ECTS earned > 0
-  // From the transcript format, courses appear as rows with code, then later ECTS values
-  // We'll extract all course code patterns and check for earned credits
-  const codes=new Set();
-
-  // Match course codes (3 letters + 4 digits pattern)
-  const codePattern=/\b([A-Z]{2,4}\d{4})\b/g;
-  let m;
-  // Split into lines for context analysis
-  const lines=text.split(/\n/);
-  for(const line of lines){
-    // Reset regex
-    const lineMatches=[...line.matchAll(/\b([A-Z]{2,4}\d{4})\b/g)];
-    for(const lm of lineMatches){
-      codes.add(lm[1]);
-    }
-  }
-
-  // Also handle "core 1000-level" prerequisite pattern
-  // If student has any 1000-level PRA courses, they likely meet "core 1000-level"
-  const has1000PRA=[...codes].some(c=>/^PRA1/.test(c));
-
-  transcript={name,pnumber,completed:codes,has1000PRA};
-  updateTranscriptUI();
-
-  // Auto-confirm prerequisites that are already met
-  Object.keys(PLANS).forEach(k=>{
-    autoCheckPrereqs(k);
-  });
-
-  // Refresh current view
-  if(courses.length)switchPlan(act);
-}
-
-function autoCheckPrereqs(planKey){
-  if(!transcript)return;
-  const p=PLANS[planKey];
-  const allItems=[...courses,...labs];
-  for(const it of allItems){
-    if(!it.Prerequisite||!it.PrerequisiteCodes)continue;
-    if(checkPrereqMet(it.PrerequisiteCodes)){
-      p.ack[it.Code]=true;
-    }
-  }
-}
-
-function checkPrereqMet(prereqStr){
-  if(!transcript)return false;
-  // prereqStr uses + for AND, / for OR
-  // e.g. "BIO2001+BIO2007" means both needed
-  // e.g. "MAT2004/MAT2006/MAT2008" means any one
-  // e.g. "PRA2014+core 1000-level" has special token
-  const andParts=prereqStr.split('+');
-  return andParts.every(part=>{
-    const trimmed=part.trim();
-    if(trimmed.toLowerCase().includes('core 1000-level')){
-      return transcript.has1000PRA;
-    }
-    const orParts=trimmed.split('/');
-    return orParts.some(op=>transcript.completed.has(op.trim()));
-  });
-}
-
-function updateTranscriptUI(){
-  const el=document.getElementById('tbanner');
-  if(!transcript){el.style.display='none';return;}
-  el.style.display='flex';
-  const n=transcript.completed.size;
-  el.innerHTML=`
-    <span class="ti-icon">&#127891;</span>
-    <div class="ti-body">
-      <strong>Transcript loaded</strong>
-      <p>Prerequisites will be checked automatically against your completed courses.</p>
-      ${transcript.name?`<div class="stu-info">${transcript.name}${transcript.pnumber?' &middot; '+transcript.pnumber:''}</div>`:''}
-      <div class="stu-courses">${n} course${n!==1?'s':''} found on transcript</div>
-    </div>
-    <button class="btn-sm btn-clear" onclick="clearTranscript()">Clear</button>
-  `;
-}
-
-function clearTranscript(){
-  transcript=null;
-  updateTranscriptUI();
-  // Reset all acks
-  Object.keys(PLANS).forEach(k=>{PLANS[k].ack={};});
-  switchPlan(act);
-}
 
 // ── CSV / Config ──
 window.addEventListener('DOMContentLoaded',()=>{
@@ -487,8 +380,6 @@ function load(text){
   document.getElementById('mc').style.display='';
   document.getElementById('pp').textContent=cfgP&&cfgY?`Period ${cfgP}, ${cfgY}`:'';
   document.getElementById('pd').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-  // Auto-check prereqs if transcript already loaded
-  if(transcript)Object.keys(PLANS).forEach(k=>autoCheckPrereqs(k));
   switchPlan('A');showScreen('pl');
 }
 
@@ -510,7 +401,7 @@ function switchPlan(k){
   document.getElementById('lab').value=p.lab;
   showPanel(cv1,'pi1',false);showPanel(cv2,'pi2',false);
   showPanel(labs.find(l=>l.Code===p.lab)||null,'pil',true);
-  checkPrereqs();buildSummary();buildTT();
+  checkPrereqs();buildSummary();buildNextSteps();buildTT();
 }
 
 function save(){const p=PLANS[act];p.c1=document.getElementById('c1').value;p.c2=document.getElementById('c2').value;p.lab=document.getElementById('lab').value;}
@@ -525,14 +416,7 @@ function addGroupedOptions(s,g){
     og.label=sl?`Slot ${sl}`:'Other';
     g[sl].forEach(c=>{
       const flags=[c.Corequisite?'\u25ca':'',c.Prerequisite?'\u25b2':''].filter(Boolean).join(' ');
-      let eligFlag='';
-      if(transcript&&c.Prerequisite&&c.PrerequisiteCodes){
-        eligFlag=checkPrereqMet(c.PrerequisiteCodes)?' \u2713':' \u2717';
-      }
-      const opt=new Option(`${c.Code} \u2014 ${c.Title}${flags?'  '+flags:''}${eligFlag}`,c.Code);
-      if(transcript&&c.Prerequisite&&c.PrerequisiteCodes&&!checkPrereqMet(c.PrerequisiteCodes)){
-        opt.style.color='#B91C1C';
-      }
+      const opt=new Option(`${c.Code} \u2014 ${c.Title}${flags?'  '+flags:''}`,c.Code);
       og.appendChild(opt);
     });
     s.appendChild(og);
@@ -545,14 +429,7 @@ function buildLabs(used){
   const ok=labs.filter(l=>!l.Days.some(d=>used.has(d)));
   ok.forEach(l=>{
     const f=[l.Corequisite?'\u25ca':'',l.Prerequisite?'\u25b2':''].filter(Boolean).join(' ');
-    let eligFlag='';
-    if(transcript&&l.Prerequisite&&l.PrerequisiteCodes){
-      eligFlag=checkPrereqMet(l.PrerequisiteCodes)?' \u2713':' \u2717';
-    }
-    const opt=new Option(`${l.Code} \u2014 ${l.Title}${f?'  '+f:''}${eligFlag}`,l.Code);
-    if(transcript&&l.Prerequisite&&l.PrerequisiteCodes&&!checkPrereqMet(l.PrerequisiteCodes)){
-      opt.style.color='#B91C1C';
-    }
+    const opt=new Option(`${l.Code} \u2014 ${l.Title}${f?'  '+f:''}`,l.Code);
     s.appendChild(opt);
   });
   if(pv&&[...s.options].some(o=>o.value===pv))s.value=pv;
@@ -569,12 +446,7 @@ function showPanel(item,id,isLab){
   if(!item){el.classList.remove('show');return;}
   const chips=item.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join('');
   const tags=[item.Corequisite?'<span class="tg tg-co">\u25ca Co-req</span>':'',item.Prerequisite?'<span class="tg tg-pre">\u25b2 Pre-req</span>':''].filter(Boolean).join('');
-  let eligTag='';
-  if(transcript&&item.Prerequisite&&item.PrerequisiteCodes){
-    const met=checkPrereqMet(item.PrerequisiteCodes);
-    eligTag=met?'<span class="tg tg-elig">\u2713 Eligible</span>':'<span class="tg tg-inelig">\u2717 Not eligible</span>';
-  }
-  el.innerHTML=`<div class="crow">${!isLab?`<span class="slotb sl-${item.Slot}">SLOT ${item.Slot}</span>`:''}<div class="days">${chips}</div>${tags}${eligTag}</div><div class="crow"><span class="coord">Coordinator: ${item.Coordinator}</span></div>`;
+  el.innerHTML=`<div class="crow">${!isLab?`<span class="slotb sl-${item.Slot}">SLOT ${item.Slot}</span>`:''}<div class="days">${chips}</div>${tags}</div><div class="crow"><span class="coord">Coordinator: ${item.Coordinator}</span></div>`;
   el.classList.add('show');
 }
 
@@ -662,25 +534,16 @@ function checkPrereqs(){
   let html='',badCo=false,unPre=false,coI=[];
   for(const c of sel){if(c.Corequisite&&c.CorequisiteOf){const rc=c.CorequisiteOf,rebuildLabs=labs.find(l=>l.Code===rc);const rn=rebuildLabs?.Title||courses.find(x=>x.Code===rc)?.Title||rc;coI.push({from:c,rc,rn,rt:rebuildLabs?'practical':'course',ok:lab&&lab.Code===rc});}}
   if(lab&&lab.Corequisite&&lab.CorequisiteOf){const rc=lab.CorequisiteOf,rn=courses.find(c=>c.Code===rc)?.Title||rc,sat=sel.some(c=>c.Code===rc);if(!coI.some(i=>i.from.Code===rc&&i.rc===lab.Code))coI.push({from:lab,rc,rn,rt:'course',ok:sat});}
-  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p></div></div>`;}});}
+  if(coI.length){html+='<p class="seclbl">Co-requisites</p>';coI.forEach(i=>{if(i.ok)html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Co-requisite satisfied</strong><p><em>${i.from.Code}</em> requires <em>${i.rc} \u2014 ${i.rn}</em>. Already selected.</p></div></div>`;else{badCo=true;html+=`<div class="alrt a-err"><span class="aico">\u26a0</span><div class="abdy"><strong>Missing co-requisite</strong><p><em>${i.from.Code} \u2014 ${i.from.Title}</em> must be taken with <strong>${i.rc} \u2014 ${i.rn}</strong>.</p><div class="guidance"><strong>Add the co-requisite</strong> to your plan, or contact the module coordinator to request a waiver. If you have already passed the co-requisite in a previous period, it is automatically waived.</div></div></div>`;}});}
   const preI=[];
-  for(const it of [...sel,lab].filter(Boolean)){if(it.Prerequisite&&it.PrerequisiteCodes){if(!(it.Code in p.ack))p.ack[it.Code]=transcript?checkPrereqMet(it.PrerequisiteCodes):false;preI.push(it);}}
+  for(const it of [...sel,lab].filter(Boolean)){if(it.Prerequisite&&it.PrerequisiteCodes){if(!(it.Code in p.ack))p.ack[it.Code]=false;preI.push(it);}}
   if(preI.length){
     if(html)html+='<div style="height:12px"></div>';
     html+='<p class="seclbl">Prerequisites</p>';
     preI.forEach(it=>{
-      const met=transcript?checkPrereqMet(it.PrerequisiteCodes):false;
       const ok=p.ack[it.Code];
       if(!ok)unPre=true;
-
-      if(transcript&&met){
-        // Auto-verified by transcript
-        html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Prerequisite verified from transcript</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 found on your transcript.</p></div></div>`;
-      }else if(transcript&&!met){
-        html+=`<div class="alrt a-err"><span class="aico">\u2717</span><div class="abdy"><strong>Prerequisite not met</strong><p><em>${it.Code} \u2014 ${it.Title}</em> requires ${formatPrereqs(it.PrerequisiteCodes)} \u2014 <strong>not found on your transcript</strong>.</p></div></div>`;
-      }else{
-        html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>`;
-      }
+      html+=`<div class="pb ${ok?'conf':''}" id="pb-${it.Code}"><input type="checkbox" id="ck-${it.Code}" ${ok?'checked':''} onchange="acknowledgeCheck('${it.Code}',this.checked)"><label for="ck-${it.Code}">To take <strong>${it.Code} \u2014 ${it.Title}</strong> you must have completed: <span class="pc">${formatPrereqs(it.PrerequisiteCodes)}</span>.<span class="ph">Check this box to confirm.</span></label></div>${!ok?'<div class="guidance">Don\u2019t have the prerequisite? You can <strong>request a waiver</strong> from the course coordinator. Email them with a brief explanation of why you should be admitted. Submit the coordinator\u2019s approval email with your course selection form before the registration deadline. Waivers are an exception, not the norm.</div>':''}`;
     });
   }
   if(!coI.length&&!preI.length)html='<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>No prerequisites or co-requisites</strong><p>Your selection has no additional requirements.</p></div></div>';
@@ -712,7 +575,7 @@ function buildSummary(){
     const chips=c.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(c.Prerequisite&&c.PrerequisiteCodes){
-      const met=transcript?checkPrereqMet(c.PrerequisiteCodes):p.ack[c.Code];
+      const met=p.ack[c.Code];
       prereqInfo=`<div style="font-size:10.5px;margin-top:3px;color:${met?'var(--ok)':'var(--warn)'}">Prereq: ${c.PrerequisiteCodes} ${met?'\u2713':'\u26a0'}</div>`;
     }
     let coreqInfo='';
@@ -726,7 +589,7 @@ function buildSummary(){
     const chips=lab.Days.map(d=>`<span class="daychip">${formatDay(d)}</span>`).join(' ');
     let prereqInfo='';
     if(lab.Prerequisite&&lab.PrerequisiteCodes){
-      const met=transcript?checkPrereqMet(lab.PrerequisiteCodes):p.ack[lab.Code];
+      const met=p.ack[lab.Code];
       prereqInfo=`<div style="font-size:10.5px;margin-top:3px;color:${met?'var(--ok)':'var(--warn)'}">Prereq: ${lab.PrerequisiteCodes} ${met?'\u2713':'\u26a0'}</div>`;
     }
     let coreqInfo='';
@@ -757,7 +620,7 @@ function buildSummary(){
   if(preItems.length||coItems.length){
     checksHtml='<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--g2)"><p class="seclbl" style="margin-bottom:8px">Prerequisite &amp; Co-requisite Summary</p>';
     preItems.forEach(it=>{
-      const met=transcript?checkPrereqMet(it.PrerequisiteCodes):p.ack[it.Code];
+      const met=p.ack[it.Code];
       checksHtml+=`<div style="font-size:12px;padding:4px 0;color:${met?'var(--ok)':'var(--warn)'}"><strong>${it.Code}</strong> requires ${it.PrerequisiteCodes} \u2014 ${met?'Confirmed \u2713':'Unconfirmed \u26a0'}</div>`;
     });
     coItems.forEach(ci=>{
@@ -766,13 +629,10 @@ function buildSummary(){
     checksHtml+='</div>';
   }
 
-  // Student info for print
-  let stuHtml='';
-  if(transcript&&(transcript.name||transcript.pnumber)){
-    stuHtml=`<div style="margin-top:14px;padding:10px 14px;background:var(--g0);border-radius:var(--rs);border:1px solid var(--g2);font-size:12px"><strong style="color:var(--navy)">Student:</strong> ${transcript.name||''}${transcript.pnumber?' \u00b7 '+transcript.pnumber:''}</div>`;
-  }
+  // Print-only reminders
+  let printReminders=`<div class="printonly" style="margin-top:16px;padding:14px;background:var(--g0);border:1px solid var(--g2);border-radius:var(--rs)"><p class="seclbl" style="margin-bottom:6px">Important Reminders</p><ul style="margin:0 0 0 16px;font-size:11.5px;color:var(--g5);line-height:1.7"><li>This plan is for self-preparation only. <strong>Confirm all registrations with your academic advisor.</strong></li><li>If you need prerequisite waivers, contact the course coordinator <strong>before the registration deadline</strong>.</li><li>Period ${DEADLINES.period} switch deadline: <strong>${DEADLINES.switch}</strong></li><li>Period ${DEADLINES.period} withdrawal deadline: <strong>${DEADLINES.withdrawal}</strong></li></ul></div>`;
 
-  bEl.innerHTML=`${stuHtml}<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${sb}`;
+  bEl.innerHTML=`<div style="overflow-x:auto"><table class="stbl"><thead><tr><th>Type</th><th>Course / Practical</th><th>Slot</th><th>Schedule</th><th>Coordinator</th></tr></thead><tbody>${rows}</tbody></table></div><div style="margin-top:18px"><p class="seclbl" style="margin-bottom:8px">Weekly Timetable</p>${ttHtml}</div>${checksHtml}${printReminders}${sb}`;
   if(done){sEl.className='spill sp-ok';sEl.textContent='\u2713 Ready to print';}
   else if(iss.length){sEl.className='spill sp-warn';sEl.textContent='\u26a0 Issues to resolve';}
   else{sEl.className='spill sp-pend';sEl.textContent='Incomplete';}
@@ -846,10 +706,41 @@ function buildCmp(){
   el.innerHTML=html;
 }
 
+// ── Next Steps ──
+function buildNextSteps(){
+  const c1=getCourse1(),c2=getCourse2(),lab=getLab(),sel=[c1,c2].filter(Boolean);
+  const el=document.getElementById('nextsteps'),bd=document.getElementById('nsbd');
+  const p=PLANS[act];
+  const done=sel.length===2&&lab&&planStatus(act)==='ok';
+  if(!sel.length){el.style.display='none';return;}
+  el.style.display='';
+
+  // Check if switch deadline is near or past
+  const switchDate=new Date('2026-03-06T17:00:00');
+  const now=new Date();
+  const switchUrgent=now>new Date(switchDate.getTime()-7*24*60*60*1000);
+
+  let html='';
+  if(done){
+    html+=`<div class="alrt a-ok"><span class="aico">\u2713</span><div class="abdy"><strong>Your plan looks good!</strong><p>Here\u2019s what to do next:</p></div></div>`;
+    html+=`<ol class="nsteps" style="margin-top:12px"><li><strong>Save this plan as PDF</strong> using the button below</li><li><strong>Bring it to your academic advising session</strong></li><li><strong>Register</strong> for your chosen modules via the course registration form before the deadline</li><li><strong>Check the switch/withdrawal deadlines</strong> if you need to make changes later</li></ol>`;
+  }else{
+    html+=`<div class="alrt a-inf"><span class="aico">\u2139</span><div class="abdy"><strong>Almost there</strong><p>Resolve the outstanding issues above, then follow these steps to finalise your registration.</p></div></div>`;
+  }
+
+  // Deadline boxes
+  html+=`<div class="dl-grid"><div class="dl-box${switchUrgent?' dl-urgent':''}"><div class="dl-lbl">Switch deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.switch}</div></div><div class="dl-box"><div class="dl-lbl">Withdrawal deadline \u2014 Period ${DEADLINES.period}</div><div class="dl-val">${DEADLINES.withdrawal}</div></div></div>`;
+
+  // Useful links
+  html+=`<div class="links-row"><a href="${LINKS.switchForm}" target="_blank">\u{1F4DD} Switch/withdraw form</a></div>`;
+
+  bd.innerHTML=html;
+}
+
 // ── Event listeners ──
-document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildTT();});
-document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildTT();});
-document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildTT();});
+document.getElementById('c1').addEventListener('change',()=>{save();const c1=getCourse1();showPanel(c1,'pi1',false);buildCourse2(c1?.Slot||null);if(!getCourse2())document.getElementById('pi2').classList.remove('show');rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
+document.getElementById('c2').addEventListener('change',()=>{save();showPanel(getCourse2(),'pi2',false);rebuildLabs();checkPrereqs();buildSummary();buildNextSteps();buildTT();});
+document.getElementById('lab').addEventListener('change',()=>{save();showPanel(getLab(),'pil',true);checkPrereqs();buildSummary();buildNextSteps();buildTT();});
 function rebuildLabs(){const c1=getCourse1(),c2=getCourse2();const u=new Set([...(c1?.Days||[]),...(c2?.Days||[])]);buildLabs(u);showPanel(getLab(),'pil',true);}
 function resetPlan(){PLANS[act]=emptyPlan();switchPlan(act);updateTabIcons();}
 </script>
