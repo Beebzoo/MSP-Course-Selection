@@ -112,6 +112,11 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .detail-close{display:inline-flex;align-items:center;gap:5px;margin-top:16px;padding:8px 16px;border-radius:var(--rs);font-size:12px;font-weight:600;color:var(--navy);background:var(--sa-bg);border:1px solid rgba(29,78,216,.15);cursor:pointer;font-family:inherit;transition:all .15s}
 .detail-close:hover{background:var(--navy);color:#fff}
 
+/* ── Star / Bookmark ── */
+.star-btn{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:rgba(255,255,255,.7);border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:5;backdrop-filter:blur(4px);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.star-btn:hover{background:rgba(255,255,255,.95);transform:scale(1.1)}
+.star-btn.starred{background:var(--warn-bg);color:var(--orange)}
+
 /* ── Footer ── */
 footer{text-align:center;padding:20px 24px;font-size:12px;color:var(--g4);border-top:1px solid var(--g2);background:#fff;display:flex;flex-direction:column;align-items:center}
 footer .ft-line{margin-bottom:0;font-size:11px}
@@ -140,7 +145,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
 <body>
 <header class="hdr">
   <div class="hdr-brand">
-    <img src="logo-header.png" alt="Maastricht University" class="logo-um">
+    <a href="catalogue.html" style="display:flex;align-items:center"><img src="logo-header.png" alt="Maastricht University" class="logo-um"></a>
     <div class="hdr-center">
       <div class="hdr-title">MSP Course Planner</div>
       <div class="hdr-sub">Maastricht Science Programme &nbsp;&middot;&nbsp; Faculty of Science and Engineering</div>
@@ -326,7 +331,9 @@ function applyFilters(){
       if(item.Prerequisite)tags.push('<span class="tag tag-pre">\u25b2 Pre-req</span>');
       if(item.Corequisite)tags.push('<span class="tag tag-co">\u25ca Co-req</span>');
 
+      const isStarred=getStarred().includes(item.Code);
       html+=`<div class="ccard card-${item.Slot||'PRA'}" id="card-${item.Code}" onclick="toggleCard('${item.Code}',event)">`;
+      html+=`<button class="star-btn${isStarred?' starred':''}" onclick="event.stopPropagation();toggleStar('${item.Code}')" title="${isStarred?'Remove from shortlist':'Add to shortlist'}">${isStarred?'\u2605':'\u2606'}</button>`;
       html+=`<div class="ccard-top">`;
       html+=`<div class="ccard-row1"><span class="cc-code">${item.Code}</span>${tags.join('')}</div>`;
       html+=`<div class="cc-title">${esc(item.Title)}</div>`;
@@ -444,6 +451,31 @@ function closeCard(code){
   if(el)el.classList.remove('expanded');
 }
 
+// ── Starred / Shortlist ──
+function getStarred(){
+  try{return JSON.parse(localStorage.getItem('msp-starred')||'[]');}catch{return[];}
+}
+function setStarred(arr){
+  localStorage.setItem('msp-starred',JSON.stringify(arr));
+}
+function toggleStar(code){
+  const starred=getStarred();
+  const idx=starred.indexOf(code);
+  if(idx>=0)starred.splice(idx,1);else starred.push(code);
+  setStarred(starred);
+  // Update just the button
+  const card=document.getElementById('card-'+code);
+  if(card){
+    const btn=card.querySelector('.star-btn');
+    if(btn){
+      const on=starred.includes(code);
+      btn.classList.toggle('starred',on);
+      btn.innerHTML=on?'\u2605':'\u2606';
+      btn.title=on?'Remove from shortlist':'Add to shortlist';
+    }
+  }
+}
+
 // ── Init ──
 async function init(){
   try{
@@ -465,7 +497,18 @@ async function init(){
     document.getElementById('loading').innerHTML='<p style="color:var(--err)">Failed to load course data. Make sure FrameSchedule_P5_v1.csv and MSP_P5_Course_Descriptions.md are in the same folder.</p>';
   }
 }
-init();
+init().then(()=>{
+  // Auto-expand card if navigated via hash (e.g. from planner shortlist)
+  if(location.hash){
+    const id=location.hash.slice(1);
+    const code=id.replace('card-','');
+    const el=document.getElementById(id);
+    if(el){
+      el.classList.add('expanded');
+      setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),100);
+    }
+  }
+});
 </script>
 </body>
 </html>
