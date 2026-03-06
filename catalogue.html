@@ -113,7 +113,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .detail-close:hover{background:var(--navy);color:#fff}
 
 /* ── Star / Bookmark ── */
-.star-btn{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:rgba(255,255,255,.7);border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;z-index:5;backdrop-filter:blur(4px);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.star-btn{width:28px;height:28px;border:none;background:rgba(255,255,255,.7);border-radius:50%;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;margin-left:auto;backdrop-filter:blur(4px)}
 .star-btn:hover{background:rgba(255,255,255,.95);transform:scale(1.1)}
 .star-btn.starred{background:var(--warn-bg);color:var(--orange)}
 
@@ -155,6 +155,7 @@ footer .ft-line{margin-bottom:0;font-size:11px}
   <nav class="nav-bar">
     <a class="nav-link" href="index.html">&#128736; Course Planner</a>
     <a class="nav-link active" href="catalogue.html">&#128218; Course Catalogue</a>
+    <a class="nav-link" href="index.html#info">&#9432; Information</a>
     <span class="nav-spacer"></span>
     <span id="navInfo" style="font-size:11px;color:rgba(255,255,255,.5)"></span>
   </nav>
@@ -333,14 +334,13 @@ function applyFilters(){
 
       const isStarred=getStarred().includes(item.Code);
       html+=`<div class="ccard card-${item.Slot||'PRA'}" id="card-${item.Code}" onclick="toggleCard('${item.Code}',event)">`;
-      html+=`<button class="star-btn${isStarred?' starred':''}" onclick="event.stopPropagation();toggleStar('${item.Code}')" title="${isStarred?'Remove from shortlist':'Add to shortlist'}">${isStarred?'\u2605':'\u2606'}</button>`;
       html+=`<div class="ccard-top">`;
       html+=`<div class="ccard-row1"><span class="cc-code">${item.Code}</span>${tags.join('')}</div>`;
       html+=`<div class="cc-title">${esc(item.Title)}</div>`;
       html+=`<div class="cc-coord">${esc(item.Coordinator)}</div>`;
       html+=`</div>`;
       html+=`<div class="ccard-meta">${days}</div>`;
-      html+=`<div class="ccard-expand">\u25B6 Click to view full course description</div>`;
+      html+=`<div class="ccard-expand"><span>\u25B6 Click to view full course description</span><button class="star-btn${isStarred?' starred':''}" onclick="event.stopPropagation();toggleStar('${item.Code}')" title="${isStarred?'Remove from shortlist':'Add to shortlist'}">${isStarred?'\u2605':'\u2606'}</button></div>`;
 
       // Detail panel
       html+=`<div class="ccard-detail">`;
