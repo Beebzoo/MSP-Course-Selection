@@ -407,6 +407,7 @@ function load(text){
   document.getElementById('pp').textContent=cfgP&&cfgY?`Period ${cfgP}, ${cfgY}`:'';
   document.getElementById('pd').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
   switchPlan('A');showScreen('pl');buildStarredPanel();
+  if(location.hash==='#info'){toggleInfo();history.replaceState(null,'',location.pathname);}
 }
 
 // ── Plan switching ──
